@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 
 // IMPORT ROUTES
 const userRouter = require('./routers/user-router')
+const posterRouter = require('./routers/poster-router')
 
 
 // .USE
@@ -25,9 +26,8 @@ app.use(bodyParser.urlencoded({
 
 // ROUTES
 app.use('/auth', userRouter)
+app.use('/poster', posterRouter)
 
-
-const posterRouter = require('./routers/poster-router')
 // START SERVER
 function startServer() {
     try {
@@ -37,13 +37,12 @@ function startServer() {
     }
 }
 function mongoConnect() {
-    mongoose.set("strictQuery", false);
     mongoose.connect(process.env.MONGO_URL,
+        {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
     )
-
-
-
-
 
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
