@@ -14,8 +14,8 @@ module.exports = {
 
         return posterFromDb._id.toString()
     },
-    async getAllElements(type) {
-        return PosterModel.find({ 'type': type })
+    async findMany() {
+        return PosterModel.find({})
     },
     async findById(_id) {
         return PosterModel.findById(_id)
