@@ -1,4 +1,5 @@
 const UserModel = require('../models/user-model')
+const RoleModel = require('../models/role-model')
 const bcrypt = require('bcryptjs');
 const TokenService = require('../service/token-service')
 const { sendMail } = require('../middleware/mailer');
@@ -65,14 +66,11 @@ module.exports = {
         );
     },
     async registration(email, password, firstname, lastname, phone) {
-
         try {
             let defaultUser = new RoleModel()
             let adminUser = new RoleModel({ value: 'super_admin' })
-            let approvedUser = new RoleModel({ value: 'approved_user' })
             await defaultUser.save()
             await adminUser.save()
-            await approvedUser.save()
         } catch (err) { }
 
         const candidate = await UserModel.findOne({ email })
