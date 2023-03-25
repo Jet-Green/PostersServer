@@ -30,12 +30,12 @@ module.exports = {
         let { user_id, token } = payload;
 
         let candidate = await UserModel.findById(user_id)
-        if (!candidate) throw new Error('Пользователь с таким _id не найден')
+        if (!candidate) return new Error('Пользователь с таким _id не найден')
 
         let secret = process.env.JWT_RESET_SECRET + candidate.password
         let result = TokenService.validateResetToken(token, secret)
 
-        if (result == null) throw new Error('Нет доступа')
+        if (result == null) return new Error('Нет доступа')
 
         return result
     },
@@ -43,7 +43,7 @@ module.exports = {
         let candidate = await UserModel.findOne({ email: email })
 
         if (!candidate)
-            throw new Error('Пользователь с таким email не найден')
+            return new Error('Пользователь с таким email не найден')
 
         // ну вот так
         const secret = process.env.JWT_RESET_SECRET + candidate.password
@@ -75,7 +75,7 @@ module.exports = {
 
         const candidate = await UserModel.findOne({ email })
         if (candidate) {
-            throw new Error(`Пользователь с почтой ${email} уже существует`)
+            return new Error(`Пользователь с почтой ${email} уже существует`)
         }
 
         const hashPassword = await bcrypt.hash(password, 3)
@@ -94,13 +94,13 @@ module.exports = {
         const user = await UserModel.findOne({ email })
 
         if (!user) {
-            throw new Error('Пользователь с таким email не найден')
+            return new Error('Пользователь с таким email не найден')
         }
 
         const isPassEquals = await bcrypt.compare(password, user.password)
 
         if (!isPassEquals) {
-            throw new Error('Неверный пароль')
+            return new Error('Неверный пароль')
         }
 
         const tokens = TokenService.generateTokens({ email, password: user.password, _id: user._id })
@@ -114,13 +114,13 @@ module.exports = {
     },
     async refresh(refreshToken) {
         if (!refreshToken) {
-            throw new Error('Unauthorized');
+            return new Error('Unauthorized');
         }
         const userData = TokenService.validateRefreshToken(refreshToken);
         const tokenFromDb = await TokenService.findToken(refreshToken);
 
         if (!userData || !tokenFromDb) {
-            throw new Error('Unauthorized');
+            return new Error('Unauthorized');
         }
 
         const user = await UserModel.findById(userData._id)
