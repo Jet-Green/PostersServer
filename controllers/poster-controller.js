@@ -19,9 +19,9 @@ module.exports = {
     },
     async create(req, res, next) {
         try {
-            const PosterCb = await PosterService.insertOne(req.body)
+            const posterId = await PosterService.createPoster(req.body)
 
-            return res.json({ _id: PosterCb._id })
+            return res.json({ _id: posterId })
         } catch (error) {
             next(error)
         }
