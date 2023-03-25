@@ -8,12 +8,24 @@ const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser');
 
+// IMPORT ROUTES
+const userRouter = require('./routers/user-router')
 
 
 // .USE
-
+app.use(cors({
+    origin: [process.env.CLIENT_URL, "http://localhost:5174"],
+    credentials: true
+}))
+app.use(express.json())
+app.use(cookieParser())
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 // ROUTES
+app.use('/auth', userRouter)
+
 
 // START SERVER
 function startServer() {
