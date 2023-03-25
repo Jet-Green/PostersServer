@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const TokenService = require('../service/token-service')
 const { sendMail } = require('../middleware/mailer');
 
+const UserDto = require('../dtos/user-dto');
+
 module.exports = {
     async resetPassword(payload) {
         let { password, token, user_id } = payload;
@@ -19,9 +21,11 @@ module.exports = {
             const tokens = TokenService.generateTokens({ email: user.email, hashPassword, _id: user._id })
             await TokenService.saveToken(user._id, tokens.refreshToken);
 
+            let userToSend = new UserDto(user)
+
             return {
                 ...tokens,
-                user
+                user: userToSend
             }
         }
         return null
@@ -85,9 +89,11 @@ module.exports = {
         const tokens = TokenService.generateTokens({ email, hashPassword, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
 
+        let userToSend = new UserDto(user)
+
         return {
             ...tokens,
-            user
+            user: userToSend
         }
     },
     async login(email, password) {
@@ -106,10 +112,13 @@ module.exports = {
         const tokens = TokenService.generateTokens({ email, password: user.password, _id: user._id })
 
         await TokenService.saveToken(user._id, tokens.refreshToken);
+
+        let userToSend = new UserDto(user)
+
         return {
             ...tokens,
             // pass the data to client
-            user
+            user: userToSend
         }
     },
     async refresh(refreshToken) {
@@ -127,10 +136,12 @@ module.exports = {
 
         const tokens = TokenService.generateTokens({ email: user.email, password: user.password, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
+
+        let userToSend = new UserDto(user)
+
         return {
             ...tokens,
-            // pass the data to client
-            user
+            user: userToSend
         }
     },
     async logout(refreshToken) {

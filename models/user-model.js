@@ -8,7 +8,7 @@ const UserSchema = new Schema({
     phone: { type: String },
     roles: { type: Array },
     posters: { type: Array },
-    subscription: { type: Object },
+    subscription: { type: Object, default: {} },
 })
 
 module.exports = model('User', UserSchema);
