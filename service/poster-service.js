@@ -22,8 +22,18 @@ module.exports = {
     async getById(_id) {
         return PosterModel.findById(_id)
     },
-    async deleteOne(_id) {
-        return PosterModel.deleteOne({ _id: _id })
+    async deleteOne(poster_id, email) {
+        let user = await UserModel.findOne({ email: email })
+        for (let i = 0; i < user.posters.length; i++) {
+            if (user.posters[i]._id.toString() == poster_id.toString()) {
+                user.posters.splice(i, 1)
+            }
+        }
+
+        user.markModified('posters')
+
+        await user.save()
+        return await PosterModel.deleteOne({ _id: poster_id })
     },
     async deleteMany() {
         return PosterModel.deleteMany({})

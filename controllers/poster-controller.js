@@ -12,7 +12,6 @@ let s3 = new EasyYandexS3({
 });
 
 module.exports = {
-
     async getAll(req, res, next) {
         try {
             return res.json(await PosterService.findMany())
@@ -44,7 +43,7 @@ module.exports = {
             }
             let posterId = req.query.poster_id
 
-            let uploadResult = await s3.Upload(buffer, '/poster-city/');
+            let uploadResult = await s3.Upload(buffer, '/plakat-city/');
             let filename = uploadResult.Location
 
             if (filename) {
@@ -64,8 +63,9 @@ module.exports = {
     },
     async deleteById(req, res, next) {
         try {
-            const _id = req.body._id
-            return await PosterService.deleteOne(_id);
+            const { _id, email } = req.query
+
+            return await PosterService.deleteOne(_id, email);
         } catch (error) {
             next(error)
         }

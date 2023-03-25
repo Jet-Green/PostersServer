@@ -12,9 +12,9 @@ const router = Router()
 router.post('/create', PosterController.create)
 router.post('/get-all', PosterController.getAll)
 router.post('/upload-image', multer().any(), PosterController.uploadImage)
+router.get('/delete-by-id', PosterController.deleteById)
 
 router.get('/get-by-id', PosterController.getById)
-router.post('/delete-one', PosterController.deleteById)
 router.get('/clear', PosterController.deleteMany)
 
 module.exports = router
