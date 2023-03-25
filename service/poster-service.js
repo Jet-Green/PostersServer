@@ -1,6 +1,5 @@
 const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
-const { ObjectId } = require('mongoose')
 
 module.exports = {
     async createPoster({ poster, user_id }) {
@@ -13,6 +12,9 @@ module.exports = {
         })
 
         return posterFromDb._id.toString()
+    },
+    async updateImageUrl(posterId, filename) {
+        return PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
     },
     async findMany() {
         return PosterModel.find({})
