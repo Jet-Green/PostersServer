@@ -17,7 +17,7 @@ module.exports = {
     async findMany() {
         return PosterModel.find({})
     },
-    async findById(_id) {
+    async getById(_id) {
         return PosterModel.findById(_id)
     },
     async deleteOne(_id) {

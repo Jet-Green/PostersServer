@@ -9,10 +9,10 @@ module.exports = {
             next(error)
         }
     },
-    async findById(req, res, next) {
+    async getById(req, res, next) {
         try {
             const _id = req.query._id
-            return res.json(await PosterService.findById(_id));
+            return res.json(await PosterService.getById(_id));
         } catch (error) {
             next(error)
         }
