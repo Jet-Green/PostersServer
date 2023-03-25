@@ -8,7 +8,6 @@ const PosterSchema = new Schema({
     organizer: { type: String },
     phone: { type: String },
     email: { type: String },
-    time: { type: Number },
     date: { type: Number },
     workingTime: { type: String },
     eventType: { type: String },
