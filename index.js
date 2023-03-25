@@ -27,6 +27,7 @@ app.use(bodyParser.urlencoded({
 app.use('/auth', userRouter)
 
 
+const posterRouter = require('./routers/poster-router')
 // START SERVER
 function startServer() {
     try {
