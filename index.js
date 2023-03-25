@@ -15,6 +15,7 @@ var bodyParser = require('body-parser');
 
 // ROUTES
 
+const posterRouter = require('./routers/poster-router')
 // START SERVER
 function startServer() {
     try {
