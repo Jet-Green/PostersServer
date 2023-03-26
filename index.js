@@ -11,7 +11,7 @@ var bodyParser = require('body-parser');
 // IMPORT ROUTES
 const userRouter = require('./routers/user-router')
 const posterRouter = require('./routers/poster-router')
-
+const eventLocationRouter = require('./routers/event-location-router')
 
 // .USE
 app.use(cors({
@@ -27,6 +27,7 @@ app.use(bodyParser.urlencoded({
 // ROUTES
 app.use('/auth', userRouter)
 app.use('/poster', posterRouter)
+app.use('/event-location', eventLocationRouter)
 
 // START SERVER
 function startServer() {

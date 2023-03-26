@@ -11,6 +11,7 @@ const PosterSchema = new Schema({
     date: { type: Number },
     workingTime: { type: String },
     eventType: { type: String },
+    isModerated: { type: Boolean, default: false },
 })
 
 module.exports = model('Poster', PosterSchema);

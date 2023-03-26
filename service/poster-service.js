@@ -1,8 +1,18 @@
 const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
+const EventLocationModel = require('../models/event-location-model.js')
 
 module.exports = {
     async createPoster({ poster, user_id }) {
+        let { eventLocation } = poster
+
+        let candidateEventLocationInDB = await EventLocationModel.findOne({ name: eventLocation.name })
+        if (candidateEventLocationInDB) {
+            poster.eventLocation = candidateEventLocationInDB
+        } else {
+            poster.eventLocation = await EventLocationModel.create(eventLocation)
+        }
+
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(user_id, {
