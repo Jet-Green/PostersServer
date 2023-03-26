@@ -36,6 +36,14 @@ module.exports = {
             next(error)
         }
     },
+    async updatePoster(req, res, next) {
+        try {
+            const posterId = await PosterService.updatePoster(req.body)
+            return res.json({ _id: posterId })
+        } catch (error) {
+            next(error)
+        }
+    },
     async uploadImage(req, res, next) {
         try {
             let buffer = {

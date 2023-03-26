@@ -13,6 +13,10 @@ module.exports = {
 
         return posterFromDb._id.toString()
     },
+    async updatePoster(poster) {
+        let posterFromDb = await PosterModel.findOneAndUpdate({ _id: poster._id }, poster, { new: true })
+        return posterFromDb._id
+    },
     async updateImageUrl(posterId, filename) {
         return PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
     },
