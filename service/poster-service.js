@@ -30,8 +30,9 @@ module.exports = {
     async updateImageUrl(posterId, filename) {
         return PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
     },
-    async findMany() {
-        return PosterModel.find({})
+    async findMany(filters) {
+        let { eventLocation } = filters
+        return PosterModel.find({ 'eventLocation.name': eventLocation })
     },
     async getById(_id) {
         return PosterModel.findById(_id)

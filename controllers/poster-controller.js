@@ -14,7 +14,7 @@ let s3 = new EasyYandexS3({
 module.exports = {
     async getAll(req, res, next) {
         try {
-            return res.json(await PosterService.findMany())
+            return res.json(await PosterService.findMany(req.body))
         } catch (error) {
             next(error)
         }
