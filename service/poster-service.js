@@ -32,7 +32,11 @@ module.exports = {
     },
     async findMany(filters) {
         let { eventLocation } = filters
-        return PosterModel.find({ 'eventLocation.name': eventLocation })
+        let query = {}
+        if (eventLocation) {
+            query['eventLocation.name'] = eventLocation
+        }
+        return PosterModel.find(query)
     },
     async getById(_id) {
         return PosterModel.findById(_id)
