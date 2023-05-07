@@ -36,6 +36,7 @@ module.exports = {
         if (eventLocation) {
             query['eventLocation.name'] = eventLocation
         }
+      
         return PosterModel.find(query)
     },
     async getById(_id) {
