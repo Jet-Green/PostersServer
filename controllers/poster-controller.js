@@ -78,4 +78,11 @@ module.exports = {
             next(error)
         }
     },
+    async getUserPosters(req, res, next) {
+        try {
+            return res.json(await PosterService.getUserPosters(req.body))
+        } catch (error) {
+            next(error)
+        }
+    }
 }
