@@ -1,15 +1,4 @@
 const PosterService = require('../service/poster-service')
-let EasyYandexS3 = require('easy-yandex-s3').default;
-
-// Указываем аутентификацию в Yandex Object Storage
-let s3 = new EasyYandexS3({
-    auth: {
-        accessKeyId: process.env.YC_KEY_ID,
-        secretAccessKey: process.env.YC_SECRET,
-    },
-    Bucket: process.env.YC_BUCKET_NAME, // Название бакета
-    debug: false, // Дебаг в консоли
-});
 
 module.exports = {
     async getAll(req, res, next) {
@@ -46,18 +35,7 @@ module.exports = {
     },
     async uploadImage(req, res, next) {
         try {
-            let buffer = {
-                buffer: req.files[0].buffer, name: req.files[0].originalname,
-            }
-            let posterId = req.query.poster_id
-
-            let uploadResult = await s3.Upload(buffer, '/plakat-city/');
-            let filename = uploadResult.Location
-
-            if (filename) {
-                await PosterService.updateImageUrl(posterId, filename)
-            }
-            return res.json(filename)
+            return res.json(await PosterService.updateImageUrl(req))
         } catch (error) {
             next(error)
         }
