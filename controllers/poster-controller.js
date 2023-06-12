@@ -28,7 +28,7 @@ module.exports = {
         try {
             const posterId = await PosterService.createPoster(req.body)
 
-            return res.json({ _id: posterId })
+            return res.json({ _id: posterId, message: 'Создано' })
         } catch (error) {
             next(error)
         }
