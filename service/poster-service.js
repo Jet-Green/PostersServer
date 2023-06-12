@@ -88,5 +88,8 @@ module.exports = {
     },
     getUserPosters(postersIds) {
         return PosterModel.find({ _id: { $in: postersIds } })
+    },
+    getPostersOnModeration() {
+        return PosterModel.find({ isModerated: false })
     }
 }
