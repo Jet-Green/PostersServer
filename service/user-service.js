@@ -5,6 +5,7 @@ const TokenService = require('../service/token-service')
 const { sendMail } = require('../middleware/mailer');
 
 const UserDto = require('../dtos/user-dto');
+const { default: ApiError } = require('../exception/api-error');
 
 module.exports = {
     async resetPassword(payload) {
@@ -34,12 +35,12 @@ module.exports = {
         let { user_id, token } = payload;
 
         let candidate = await UserModel.findById(user_id)
-        if (!candidate) return new Error('Пользователь с таким _id не найден')
+        if (!candidate) throw ApiError.BadRequest('Пользователь с таким _id не найден')
 
         let secret = process.env.JWT_RESET_SECRET + candidate.password
         let result = TokenService.validateResetToken(token, secret)
 
-        if (result == null) return new Error('Нет доступа')
+        if (result == null) throw ApiError.AccessDenied()
 
         return result
     },
@@ -47,7 +48,7 @@ module.exports = {
         let candidate = await UserModel.findOne({ email: email })
 
         if (!candidate)
-            return new Error('Пользователь с таким email не найден')
+            throw ApiError.BadRequest('Пользователь с таким email не найден')
 
         // ну вот так
         const secret = process.env.JWT_RESET_SECRET + candidate.password
@@ -79,7 +80,7 @@ module.exports = {
 
         const candidate = await UserModel.findOne({ email })
         if (candidate) {
-            return new Error(`Пользователь с почтой ${email} уже существует`)
+            throw ApiError.BadRequest(`Пользователь с почтой ${email} уже существует`)
         }
 
         const hashPassword = await bcrypt.hash(password, 3)
@@ -92,7 +93,7 @@ module.exports = {
         let userToSend = new UserDto(user)
 
         return {
-            ...tokens,
+            accessToken: tokens.accessToken,
             user: userToSend
         }
     },
@@ -100,13 +101,13 @@ module.exports = {
         const user = await UserModel.findOne({ email })
 
         if (!user) {
-            return new Error('Пользователь с таким email не найден')
+            throw ApiError.BadRequest('Пользователь с таким email не найден')
         }
 
         const isPassEquals = await bcrypt.compare(password, user.password)
 
         if (!isPassEquals) {
-            return new Error('Неверный пароль')
+            throw ApiError.BadRequest('Неверный пароль')
         }
 
         const tokens = TokenService.generateTokens({ email, password: user.password, _id: user._id })
@@ -116,20 +117,19 @@ module.exports = {
         let userToSend = new UserDto(user)
 
         return {
-            ...tokens,
-            // pass the data to client
+            accessToken: tokens.accessToken,
             user: userToSend
         }
     },
     async refresh(refreshToken) {
-        if (!refreshToken) {
-            return new Error('Unauthorized');
-        }
+        if (!refreshToken) 
+            throw ApiError.UnauthorizedError();
+
         const userData = TokenService.validateRefreshToken(refreshToken);
         const tokenFromDb = await TokenService.findToken(refreshToken);
 
         if (!userData || !tokenFromDb) {
-            return new Error('Unauthorized');
+            throw ApiError.UnauthorizedError()
         }
 
         const user = await UserModel.findById(userData._id)
@@ -141,7 +141,7 @@ module.exports = {
         let userToSend = new UserDto(user)
 
         return {
-            ...tokens,
+            accessToken: tokens.accessToken,
             user: userToSend
         }
     },
