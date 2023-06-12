@@ -70,5 +70,12 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    async getPostersOnModeration(req, res, next) {
+        try {
+            return res.json(await PosterService.getPostersOnModeration())
+        } catch (error) {
+            next(error)
+        }
     }
 }
