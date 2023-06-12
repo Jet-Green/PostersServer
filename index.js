@@ -11,7 +11,8 @@ var bodyParser = require('body-parser');
 // IMPORT ROUTES
 const userRouter = require('./routers/user-router')
 const posterRouter = require('./routers/poster-router')
-const eventLocationRouter = require('./routers/event-location-router')
+const eventLocationRouter = require('./routers/event-location-router');
+const errorFilter = require('./exception/errorFilter');
 
 // .USE
 app.use(cors({
@@ -23,6 +24,8 @@ app.use(cookieParser())
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+app.use(errorFilter)
 
 // ROUTES
 app.use('/auth', userRouter)
