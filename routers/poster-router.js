@@ -15,6 +15,7 @@ router.post('/upload-image', multer().any(), PosterController.uploadImage)
 router.get('/delete-by-id', PosterController.deleteById)
 
 router.get('/get-by-id', PosterController.getById)
+router.post('/get-user-posters', PosterController.getUserPosters)
 router.post('/update', PosterController.updatePoster)
 router.get('/clear', PosterController.deleteMany)
 

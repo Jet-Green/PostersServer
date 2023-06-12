@@ -1,6 +1,17 @@
 const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js')
+let EasyYandexS3 = require('easy-yandex-s3').default;
+
+// Указываем аутентификацию в Yandex Object Storage
+let s3 = new EasyYandexS3({
+    auth: {
+        accessKeyId: process.env.YC_KEY_ID,
+        secretAccessKey: process.env.YC_SECRET,
+    },
+    Bucket: process.env.YC_BUCKET_NAME, // Название бакета
+    debug: false, // Дебаг в консоли
+});
 
 module.exports = {
     async createPoster({ poster, user_id }) {
@@ -27,8 +38,25 @@ module.exports = {
         let posterFromDb = await PosterModel.findOneAndUpdate({ _id: poster._id }, poster, { new: true })
         return posterFromDb._id
     },
-    async updateImageUrl(posterId, filename) {
-        return PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+    async updateImageUrl(req) {
+        let buffer = {
+            buffer: req.files[0].buffer, name: req.files[0].originalname,
+        }
+        let posterId = req.query.poster_id
+
+        let posterFromDb = await PosterModel.findById(posterId)
+
+        if (posterFromDb.image) {
+            let spl = posterFromDb.image.split('/')
+            let result = await s3.Remove('/plakat-city/' + spl[spl.length - 1])
+        }
+
+        let uploadResult = await s3.Upload(buffer, '/plakat-city/');
+        let filename = uploadResult.Location
+
+        await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+
+        return filename
     },
     async findMany(filters) {
         let { eventLocation } = filters
@@ -36,6 +64,7 @@ module.exports = {
         if (eventLocation) {
             query['eventLocation.name'] = eventLocation
         }
+
         return PosterModel.find(query)
     },
     async getById(_id) {
@@ -54,7 +83,10 @@ module.exports = {
         // await user.save()
         return await PosterModel.deleteOne({ _id: poster_id })
     },
-    async deleteMany() {
+    deleteMany() {
         return PosterModel.deleteMany({})
     },
+    getUserPosters(postersIds) {
+        return PosterModel.find({ _id: { $in: postersIds } })
+    }
 }
