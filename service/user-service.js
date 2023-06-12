@@ -5,7 +5,7 @@ const TokenService = require('../service/token-service')
 const { sendMail } = require('../middleware/mailer');
 
 const UserDto = require('../dtos/user-dto');
-const { default: ApiError } = require('../exception/api-error');
+const ApiError = require('../exception/api-error');
 
 module.exports = {
     async resetPassword(payload) {
@@ -93,7 +93,7 @@ module.exports = {
         let userToSend = new UserDto(user)
 
         return {
-            accessToken: tokens.accessToken,
+            ...tokens,
             user: userToSend
         }
     },
@@ -117,7 +117,7 @@ module.exports = {
         let userToSend = new UserDto(user)
 
         return {
-            accessToken: tokens.accessToken,
+            ...tokens,
             user: userToSend
         }
     },
@@ -137,11 +137,12 @@ module.exports = {
         await TokenService.removeToken(refreshToken)
         const tokens = TokenService.generateTokens({ email: user.email, password: user.password, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
+        console.log(tokens.refreshToken)
 
         let userToSend = new UserDto(user)
 
         return {
-            accessToken: tokens.accessToken,
+            ...tokens,
             user: userToSend
         }
     },
