@@ -4,5 +4,7 @@ const router = Router()
 const appStateController = require('../controllers/app-state-controller.js')
 
 router.get('/get-state', appStateController.getState)
+router.post('/add-event-type', appStateController.addEventType)
+router.post('/delete-event-type', appStateController.deleteEventType)
 
 module.exports = router

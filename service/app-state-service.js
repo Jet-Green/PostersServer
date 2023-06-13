@@ -7,5 +7,11 @@ module.exports = {
             return await AppStateModel.create({})
         }
         return allStates[0]
+    },
+    addEventType(newEventType) {
+        return AppStateModel.findOneAndUpdate({}, { $push: { eventTypes: newEventType } })
+    },
+    deleteEventType(eventType) {
+        return AppStateModel.findOneAndUpdate({}, { $pull: { eventTypes: eventType } })
     }
 }
