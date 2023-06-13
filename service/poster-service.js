@@ -60,9 +60,9 @@ module.exports = {
     },
     async findMany(filters) {
         let { eventLocation } = filters
-        let query = { isHidden: false, isModerated: true }
+        let query = { $and: [{ isHidden: false }, { isModerated: true }] }
         if (eventLocation) {
-            query['eventLocation.name'] = eventLocation
+            query.$and.push({ 'eventLocation.name': eventLocation })
         }
 
         return PosterModel.find(query)
