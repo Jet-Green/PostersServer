@@ -60,7 +60,7 @@ module.exports = {
     },
     async findMany(filters) {
         let { eventLocation } = filters
-        let query = {}
+        let query = { isHidden: false, isModerated: true }
         if (eventLocation) {
             query['eventLocation.name'] = eventLocation
         }

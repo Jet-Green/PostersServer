@@ -13,6 +13,8 @@ const PosterSchema = new Schema({
     workingTime: { type: String },
     eventType: { type: String },
 
+    isHidden: { type: Boolean, default: false },
+
     isModerated: { type: Boolean, default: false },
     comment: String
 })
