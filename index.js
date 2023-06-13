@@ -12,6 +12,7 @@ var bodyParser = require('body-parser');
 const userRouter = require('./routers/user-router')
 const posterRouter = require('./routers/poster-router')
 const eventLocationRouter = require('./routers/event-location-router')
+const appStateRouter = require('./routers/app-state-router')
 
 // .USE
 app.use(cors({
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({
 app.use('/auth', userRouter)
 app.use('/poster', posterRouter)
 app.use('/event-location', eventLocationRouter)
+app.use('/app-state', appStateRouter)
 
 // START SERVER
 function startServer() {
