@@ -12,6 +12,7 @@ var bodyParser = require('body-parser');
 const userRouter = require('./routers/user-router')
 const posterRouter = require('./routers/poster-router')
 const eventLocationRouter = require('./routers/event-location-router')
+const appStateRouter = require('./routers/app-state-router')
 const errorFilter = require('./exception/errorFilter');
 // .USE
 app.use(cors({
