@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     lastname: { type: String },
     phone: { type: String },
     roles: { type: Array },
-    posters: { type: Array },
+    posters: [{ type: Schema.Types.ObjectId, ref: 'Poster' }],
     subscription: { type: Object, default: {} },
 })
 
