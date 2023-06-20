@@ -6,8 +6,8 @@ const UserSchema = new Schema({
     firstname: { type: String },
     lastname: { type: String },
     phone: { type: String },
-    roles: { type: Array },
-    posters: { type: Array },
+    roles: { type: [String] },
+    posters: [{ type: Schema.Types.ObjectId, ref: 'Poster' }],
     subscription: { type: Object, default: {} },
 })
 
