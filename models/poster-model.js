@@ -1,8 +1,9 @@
 const { Schema, model } = require('mongoose');
 
 const PosterSchema = new Schema({
-    image: { type: String },
     title: { type: String },
+    description: { type: String },
+    image: { type: String },
     eventLocation: { type: Object },
     site: { type: String },
     organizer: { type: String },
@@ -11,7 +12,11 @@ const PosterSchema = new Schema({
     date: { type: Number },
     workingTime: { type: String },
     eventType: { type: String },
+
+    isHidden: { type: Boolean, default: false },
+
     isModerated: { type: Boolean, default: false },
+    comment: String
 })
 
 module.exports = model('Poster', PosterSchema);

@@ -12,7 +12,8 @@ var bodyParser = require('body-parser');
 const userRouter = require('./routers/user-router')
 const posterRouter = require('./routers/poster-router')
 const eventLocationRouter = require('./routers/event-location-router')
-
+const appStateRouter = require('./routers/app-state-router')
+// const errorFilter = require('./exception/errorFilter');
 // .USE
 app.use(cors({
     origin: [process.env.CLIENT_URL, "http://localhost:3001"],
@@ -24,10 +25,13 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+// app.use(errorFilter)
+
 // ROUTES
 app.use('/auth', userRouter)
 app.use('/poster', posterRouter)
 app.use('/event-location', eventLocationRouter)
+app.use('/app-state', appStateRouter)
 
 // START SERVER
 function startServer() {
