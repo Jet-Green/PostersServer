@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { default: mongoose } = require('mongoose');
 const tokenModel = require('../models/token-model');
 
 
@@ -51,13 +52,13 @@ module.exports = {
     },
 
     async saveToken(userId, refreshToken) {
-        const tokenData = await tokenModel.findOne({ user: userId });
+        const tokenData = await tokenModel.findOne({ user: new mongoose.Types.ObjectId(userId) })
         if (tokenData) {
             tokenData.refreshToken = refreshToken;
-            return tokenData.save();
+            return await tokenModel.save()
         }
 
-        const token = await tokenModel.create({ userId: userId, refreshToken });
+        const token = await tokenModel.create({ userId, refreshToken });
 
         return token;
     },

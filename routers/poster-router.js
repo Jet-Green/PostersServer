@@ -13,8 +13,11 @@ router.post('/create', PosterController.create)
 router.post('/get-all', PosterController.getAll)
 router.post('/upload-image', multer().any(), PosterController.uploadImage)
 router.get('/delete-by-id', PosterController.deleteById)
+router.get('/get-posters-on-moderaion', PosterController.getPostersOnModeration)
 
 router.get('/get-by-id', PosterController.getById)
+router.get('/get-posters-to-moderation' ,PosterController.getPostersToModeration)
+router.post('/get-user-posters', PosterController.getUserPosters)
 router.post('/update', PosterController.updatePoster)
 router.get('/clear', PosterController.deleteMany)
 
