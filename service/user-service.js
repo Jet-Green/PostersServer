@@ -75,8 +75,7 @@ module.exports = {
                     <h1>Чтобы поменять пароль перейдите по ссылке: </h1> <a href="${link}">${link}</a>
                 </body>
             </html>`,
-            [candidate.email], 'Восстановление пароля')
-
+            [candidate.email], 'Восстанoвление пароля')
         return link
     },
     async clearUsers() {
