@@ -1,4 +1,3 @@
-const posterModel = require('../models/poster-model')
 const PosterService = require('../service/poster-service')
 
 module.exports = {
@@ -17,12 +16,12 @@ module.exports = {
             next(error)
         }
     },
-    async getPostersToModeration(req, res, next) {
+    async getPostersOnModeration(req, res, next) {
         try {
-            return await posterModel.find({ isModerated: false })
+            return res.json(await PosterService.getPostersOnModeration())
         } catch (error) {
             next(error)
-        }        
+        }
     },
     async create(req, res, next) {
         try {

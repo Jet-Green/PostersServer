@@ -86,7 +86,7 @@ module.exports = {
     async registration(email, password, firstname, lastname, phone) {
         try {
             let defaultUser = new RoleModel()
-            let adminUser = new RoleModel({ value: 'super_admin' })
+            let adminUser = new RoleModel({ value: 'admin' })
             await defaultUser.save()
             await adminUser.save()
         } catch (err) { }
@@ -97,7 +97,7 @@ module.exports = {
         }
 
         const hashPassword = await bcrypt.hash(password, 3)
-        const adminUserRole = await RoleModel.findOne({ value: 'super_admin' })
+        const adminUserRole = await RoleModel.findOne({ value: 'admin' })
         const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone, roles: [adminUserRole.value], })
 
         const tokens = TokenService.generateTokens({ email, hashPassword, _id: user._id })
@@ -135,7 +135,7 @@ module.exports = {
         }
     },
     async refresh(refreshToken) {
-        if (!refreshToken) 
+        if (!refreshToken)
             throw ApiError.UnauthorizedError();
 
         const userData = TokenService.validateRefreshToken(refreshToken);
