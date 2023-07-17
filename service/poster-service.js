@@ -1,6 +1,7 @@
 const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
-const EventLocationModel = require('../models/event-location-model.js')
+const EventLocationModel = require('../models/event-location-model.js');
+const { filter } = require('lodash');
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
 // Указываем аутентификацию в Yandex Object Storage
@@ -59,11 +60,28 @@ module.exports = {
         return filename
     },
     async findMany(filters) {
-        console.log(filters)
         let { eventLocation } = filters
         let query = { $and: [{ isHidden: false }, { isModerated: true }] }
         if (eventLocation) {
             query.$and.push({ 'eventLocation.name': eventLocation })
+        }
+        if (filters.searchText) {
+            query.$and.push({
+                $or: [
+                    { title: { $regex: filters.searchText, $options: 'i' } },
+                    { description: { $regex: filters.searchText, $options: 'i' } },
+                    { organizer: { $regex: filters.searchText, $options: 'i' } },
+                    { site: { $regex: filters.searchText, $options: 'i' } },
+                    { phone: { $regex: filters.searchText, $options: 'i' } },
+                    { email: { $regex: filters.searchText, $options: 'i' } },
+                    { eventType: { $regex: filters.searchText, $options: 'i' } },
+                ]
+            })
+        }
+        if(filters.eventType){
+            query.$and.push({ $or: [
+                { eventType: { $regex: filters.eventType, $options: 'i' } },
+            ] })
         }
 
         return PosterModel.find(query)
