@@ -78,10 +78,12 @@ module.exports = {
                 ]
             })
         }
-        if(filters.eventType){
-            query.$and.push({ $or: [
-                { eventType: { $regex: filters.eventType, $options: 'i' } },
-            ] })
+        if (filters.eventType) {
+            query.$and.push({
+                $or: [
+                    { eventType: { $regex: filters.eventType, $options: 'i' } },
+                ]
+            })
         }
 
         return PosterModel.find(query)
