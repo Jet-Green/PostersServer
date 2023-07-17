@@ -59,6 +59,7 @@ module.exports = {
         return filename
     },
     async findMany(filters) {
+        console.log(filters)
         let { eventLocation } = filters
         let query = { $and: [{ isHidden: false }, { isModerated: true }] }
         if (eventLocation) {
