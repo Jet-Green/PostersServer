@@ -15,6 +15,12 @@ let s3 = new EasyYandexS3({
 });
 
 module.exports = {
+    async sendModerationMessage({ _id, message }) {
+        return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message })
+    },
+    async moderatePoster(_id, value) {
+        return PosterModel.findByIdAndUpdate(_id, { isModerated: value })
+    },
     async createPoster({ poster, user_id }) {
         let { eventLocation } = poster
 

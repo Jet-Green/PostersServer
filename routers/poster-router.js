@@ -21,4 +21,7 @@ router.post('/get-user-posters', PosterController.getUserPosters)
 router.post('/update', PosterController.updatePoster)
 router.get('/clear', PosterController.deleteMany)
 
+router.get('/moderate', PosterController.moderatePoster)
+router.post('/send-moderation-message', PosterController.sendModerationMessage)
+
 module.exports = router
