@@ -157,5 +157,8 @@ module.exports = {
         return await UserModel.findOneAndUpdate({ email }, user, {
             new: true
         })
+    },
+    buyPosters({ count, _id }) {
+        return UserModel.findByIdAndUpdate(_id, { $inc: { 'subscription.count': count } })
     }
 }

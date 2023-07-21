@@ -94,5 +94,12 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    async buyPosters(req, res, next) {
+        try {
+            return res.json(await UserService.buyPosters(req.body))
+        } catch (error) {
+            next(error)
+        }
     }
 }
