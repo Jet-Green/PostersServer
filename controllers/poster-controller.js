@@ -1,6 +1,20 @@
 const PosterService = require('../service/poster-service')
 
 module.exports = {
+    async sendModerationMessage(req, res, next) {
+        try {
+            return res.json(await PosterService.sendModerationMessage(req.body))
+        } catch (error) {
+            next(error)
+        }
+    },
+    async moderatePoster(req, res, next) {
+        try {
+            return res.json(await PosterService.moderatePoster(req.query._id, req.query.value))
+        } catch (error) {
+            next(error)
+        }
+    },
     async getAll(req, res, next) {
         try {
             return res.json(await PosterService.findMany(req.body))
