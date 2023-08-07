@@ -4,4 +4,7 @@ module.exports = {
     async create(form) {
         return PriceModel.create(form)
     },
+    async getAll(){
+        return PriceModel.find()
+    },
 }

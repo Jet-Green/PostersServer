@@ -8,5 +8,6 @@ const router = Router()
 
 //routes
 router.post('/create', priceController.create)
+router.get('/get-all', priceController.getAll)
 
 module.exports = router
