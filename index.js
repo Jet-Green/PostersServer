@@ -13,6 +13,7 @@ const userRouter = require('./routers/user-router')
 const posterRouter = require('./routers/poster-router')
 const eventLocationRouter = require('./routers/event-location-router')
 const appStateRouter = require('./routers/app-state-router')
+const priceRouter = require('./routers/price-router')
 // const errorFilter = require('./exception/errorFilter');
 // .USE
 app.use(cors({
@@ -32,6 +33,7 @@ app.use('/auth', userRouter)
 app.use('/poster', posterRouter)
 app.use('/event-location', eventLocationRouter)
 app.use('/app-state', appStateRouter)
+app.use('/price', priceRouter )
 
 // START SERVER
 function startServer() {
