@@ -61,8 +61,21 @@ module.exports = {
 
         const link = process.env.CLIENT_URL + `/forgot-password?user_id=${candidate._id}&token=${token}`
 
-        sendMail({ link: link }, 'reset-password.hbs', [candidate.email], 'single')
-
+        // порпишу html тут, чтобы не отправлять токен на клиент
+        sendMail(
+            `<!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Document</title>
+                </head>
+                <body>
+                    <h1>Чтобы поменять пароль перейдите по ссылке: </h1> <a href="${link}">${link}</a>
+                </body>
+            </html>`,
+            [candidate.email], 'Восстанoвление пароля')
         return link
     },
     async clearUsers() {
@@ -85,7 +98,7 @@ module.exports = {
 
         const hashPassword = await bcrypt.hash(password, 3)
         const adminUserRole = await RoleModel.findOne({ value: 'admin' })
-        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone, roles: [adminUserRole.value], })
+        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone, roles: [adminUserRole], })
 
         const tokens = TokenService.generateTokens({ email, hashPassword, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
