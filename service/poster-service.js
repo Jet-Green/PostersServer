@@ -56,7 +56,6 @@ module.exports = {
         if (!posterFromDb) {
             posterFromDb = await PosterDraftModel.findById(posterId)
         }
-
         if (posterFromDb.image) {
             let spl = posterFromDb.image.split('/')
             let result = await s3.Remove('/plakat-city/' + spl[spl.length - 1])
@@ -64,8 +63,11 @@ module.exports = {
 
         let uploadResult = await s3.Upload(buffer, '/plakat-city/');
         let filename = uploadResult.Location
-
-        await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+        let update = await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+        
+        if (!update) {   
+            await PosterDraftModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+        }
 
         return filename
     },
