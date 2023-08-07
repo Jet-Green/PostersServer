@@ -8,6 +8,7 @@ const UserSchema = new Schema({
     phone: { type: String, unique: true },
     roles: { type: [String] },
     posters: [{ type: Schema.Types.ObjectId, ref: 'Poster' }],
+    posterDrafts: [{ type: Schema.Types.ObjectId, ref: 'PosterDraft' }],
     subscription: { count: { type: Number, default: 0 } },
 })
 

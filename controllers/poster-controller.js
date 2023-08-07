@@ -90,5 +90,12 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    async createDraft(req, res, next) {
+        try {
+            return res.json(await PosterService.createDraft(req.body))
+        } catch (error) {
+            next(error)
+        }
     }
 }

@@ -10,6 +10,8 @@ const router = Router()
 
 //routes
 router.post('/create', PosterController.create)
+router.post('/create-draft', PosterController.createDraft)
+
 router.post('/get-all', PosterController.getAll)
 router.post('/upload-image', multer().any(), PosterController.uploadImage)
 router.get('/delete-by-id', PosterController.deleteById)

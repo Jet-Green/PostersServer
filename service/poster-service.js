@@ -1,4 +1,5 @@
 const PosterModel = require('../models/poster-model.js')
+const PosterDraftModel = require('../models/poster-draft-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
 const { filter } = require('lodash');
@@ -52,6 +53,9 @@ module.exports = {
         let posterId = req.query.poster_id
 
         let posterFromDb = await PosterModel.findById(posterId)
+        if (!posterFromDb) {
+            posterFromDb = await PosterDraftModel.findById(posterId)
+        }
 
         if (posterFromDb.image) {
             let spl = posterFromDb.image.split('/')
@@ -118,5 +122,23 @@ module.exports = {
     },
     getPostersOnModeration() {
         return PosterModel.find({ isModerated: false })
+    },
+    async createDraft({ poster, userId }) {
+        let { eventLocation } = poster
+
+        let candidateEventLocationInDB = await EventLocationModel.findOne({ name: eventLocation.name })
+        if (candidateEventLocationInDB) {
+            poster.eventLocation = candidateEventLocationInDB
+        } else {
+            poster.eventLocation = await EventLocationModel.create(eventLocation)
+        }
+        const posterFromDb = await PosterDraftModel.create(poster)
+
+        await UserModel.findByIdAndUpdate(userId, {
+            $push: {
+                posterDrafts: posterFromDb._id
+            }
+        })
+        return posterFromDb._id.toString()
     }
 }
