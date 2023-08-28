@@ -1,8 +1,7 @@
 const PosterModel = require('../models/poster-model.js')
-const PosterDraftModel = require('../models/poster-draft-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
-const { filter } = require('lodash');
+
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
 // Указываем аутентификацию в Yandex Object Storage
@@ -31,7 +30,7 @@ module.exports = {
         } else {
             poster.eventLocation = await EventLocationModel.create(eventLocation)
         }
-
+        poster.isDraft = false
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(user_id, {
@@ -64,8 +63,8 @@ module.exports = {
         let uploadResult = await s3.Upload(buffer, '/plakat-city/');
         let filename = uploadResult.Location
         let update = await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
-        
-        if (!update) {   
+
+        if (!update) {
             await PosterDraftModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
         }
 
@@ -127,18 +126,18 @@ module.exports = {
     },
     async createDraft({ poster, userId }) {
         let { eventLocation } = poster
-
         let candidateEventLocationInDB = await EventLocationModel.findOne({ name: eventLocation.name })
         if (candidateEventLocationInDB) {
             poster.eventLocation = candidateEventLocationInDB
         } else {
             poster.eventLocation = await EventLocationModel.create(eventLocation)
         }
-        const posterFromDb = await PosterDraftModel.create(poster)
+        poster.isDraft = true
+        const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(userId, {
             $push: {
-                posterDrafts: posterFromDb._id
+                posters: posterFromDb._id
             }
         })
         return posterFromDb._id.toString()

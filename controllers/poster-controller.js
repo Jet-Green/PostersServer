@@ -95,6 +95,7 @@ module.exports = {
         try {
             return res.json(await PosterService.createDraft(req.body))
         } catch (error) {
+            console.log(error);
             next(error)
         }
     }

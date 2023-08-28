@@ -16,7 +16,9 @@ const PosterSchema = new Schema({
     isHidden: { type: Boolean, default: false },
 
     isModerated: { type: Boolean, default: false },
-    moderationMessage: String
+    moderationMessage: String,
+
+    isDraft: { type: Boolean, default: false }
 })
 
 module.exports = model('Poster', PosterSchema);
