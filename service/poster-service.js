@@ -144,16 +144,21 @@ module.exports = {
     },
     async getPosters({ user_id, poster_status }) {
         let userFromDb = await UserModel.findById(user_id)
-
+        let posters = []
         switch (poster_status) {
             case 'active':
-                return await PosterModel.find({ isModerated: true, isHidden: false, isDraft: false, date: { $gte: Date.now() } })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, date: { $gte: Date.now() } }] })
+                break
             case 'onModeration':
-                return await PosterModel.find({ isModerated: true, isHidden: false, isDraft: false, date: { $gte: Date.now() } })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, date: { $gte: Date.now() } }] })
+                break
             case 'archive':
-                return await PosterModel.find({ date: { $lt: Date.now() } })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, date: { $lt: Date.now() } }] })
+                break
             case 'draft':
-                return await PosterModel.find({ isDraft: true })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
+                break
         }
+        return posters
     }
 }
