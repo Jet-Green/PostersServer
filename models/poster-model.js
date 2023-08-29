@@ -17,6 +17,7 @@ const PosterSchema = new Schema({
 
     isModerated: { type: Boolean, default: false },
     moderationMessage: String,
+    rejected: { type: Boolean, default: false },
 
     isDraft: { type: Boolean, default: false }
 })
