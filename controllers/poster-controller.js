@@ -95,8 +95,14 @@ module.exports = {
         try {
             return res.json(await PosterService.createDraft(req.body))
         } catch (error) {
-            console.log(error);
             next(error)
         }
-    }
+    },
+    async getPosters(req, res, next) {
+        try {
+            return res.json(await PosterService.getPosters(req.query))
+        } catch (error) {
+            next(error)
+        }
+    },
 }

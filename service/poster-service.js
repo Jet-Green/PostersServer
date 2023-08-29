@@ -141,5 +141,19 @@ module.exports = {
             }
         })
         return posterFromDb._id.toString()
+    },
+    async getPosters({ user_id, poster_status }) {
+        let userFromDb = await UserModel.findById(user_id)
+
+        switch (poster_status) {
+            case 'active':
+                return await PosterModel.find({ isModerated: true, isHidden: false, isDraft: false, date: { $gte: Date.now() } })
+            case 'onModeration':
+                return await PosterModel.find({ isModerated: true, isHidden: false, isDraft: false, date: { $gte: Date.now() } })
+            case 'archive':
+                return await PosterModel.find({ date: { $lt: Date.now() } })
+            case 'draft':
+                return await PosterModel.find({ isDraft: true })
+        }
     }
 }
