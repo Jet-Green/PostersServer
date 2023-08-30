@@ -32,7 +32,7 @@ module.exports = {
     },
     async getPostersOnModeration(req, res, next) {
         try {
-            return res.json(await PosterService.getPostersOnModeration())
+            return res.json(await PosterService.getPostersOnModeration(req.query.status))
         } catch (error) {
             next(error)
         }
@@ -80,13 +80,6 @@ module.exports = {
     async getUserPosters(req, res, next) {
         try {
             return res.json(await PosterService.getUserPosters(req.body))
-        } catch (error) {
-            next(error)
-        }
-    },
-    async getPostersOnModeration(req, res, next) {
-        try {
-            return res.json(await PosterService.getPostersOnModeration())
         } catch (error) {
             next(error)
         }

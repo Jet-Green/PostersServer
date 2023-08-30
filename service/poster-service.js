@@ -121,8 +121,12 @@ module.exports = {
     getUserPosters(postersIds) {
         return PosterModel.find({ _id: { $in: postersIds } })
     },
-    getPostersOnModeration() {
-        return PosterModel.find({ isModerated: false })
+    getPostersOnModeration(status) {
+        if (status == 'rejected') {
+            return PosterModel.find({ rejected: true })
+        } else {
+            return PosterModel.find({ isModerated: false, rejected: false })
+        }
     },
     async createDraft({ poster, userId }) {
         let { eventLocation } = poster
