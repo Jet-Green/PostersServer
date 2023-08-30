@@ -53,7 +53,7 @@ module.exports = {
 
         let posterFromDb = await PosterModel.findById(posterId)
         if (!posterFromDb) {
-            posterFromDb = await PosterDraftModel.findById(posterId)
+            posterFromDb = await PosterModel.findById(posterId)
         }
         if (posterFromDb.image) {
             let spl = posterFromDb.image.split('/')
@@ -65,7 +65,7 @@ module.exports = {
         let update = await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
 
         if (!update) {
-            await PosterDraftModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+            await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
         }
 
         return filename
