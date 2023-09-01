@@ -141,6 +141,6 @@ module.exports = {
                 posterDrafts: posterFromDb._id
             }
         })
-        return posterFromDb._id.toString()
+        return posterFromDb._id
     }
 }
