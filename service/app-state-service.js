@@ -9,7 +9,13 @@ module.exports = {
         return allStates[0]
     },
     addEventType(newEventType) {
-        return AppStateModel.findOneAndUpdate({}, { $push: { eventTypes: newEventType } })
+        return AppStateModel.findOneAndUpdate({}, { $push: { eventTypes: { name: newEventType, subcategories: [] } } })
+    },
+    async addEventSubtype(eventType, newEventSubType) {
+        let eventTypes = (await AppStateModel.findOne({})).eventTypes
+
+        eventTypes[eventTypes.findIndex(category => category.name === eventType)].subcategories.push(newEventSubType)
+        return AppStateModel.updateOne({}, { eventTypes })
     },
     deleteEventType(eventType) {
         return AppStateModel.findOneAndUpdate({}, { $pull: { eventTypes: eventType } })
