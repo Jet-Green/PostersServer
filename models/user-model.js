@@ -8,7 +8,9 @@ const UserSchema = new Schema({
     phone: { type: String, unique: true },
     roles: { type: [String] },
     posters: [{ type: Schema.Types.ObjectId, ref: 'Poster' }],
+
     subscription: { count: { type: Number, default: 0 } },
+    contract: Object
 })
 
 module.exports = model('User', UserSchema);
