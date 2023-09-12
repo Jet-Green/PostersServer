@@ -9,9 +9,13 @@ const PosterSchema = new Schema({
     organizer: { type: String },
     phone: { type: String },
     email: { type: String },
+
+    eventIsOn: { type: String },
     date: { type: Number },
     workingTime: { type: String },
+
     eventType: { type: String },
+    eventSubtype: { type: String },
 
     isHidden: { type: Boolean, default: false },
 
