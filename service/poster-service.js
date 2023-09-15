@@ -15,11 +15,11 @@ let s3 = new EasyYandexS3({
 });
 
 module.exports = {
-    async sendModerationMessage({ _id, message }) {
-        return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message })
+    async rejectPoster({ _id, message }) {
+        return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message, rejected: true })
     },
     async moderatePoster(_id, value) {
-        return PosterModel.findByIdAndUpdate(_id, { isModerated: value })
+        return PosterModel.findByIdAndUpdate(_id, { isModerated: value, rejected: false })
     },
     async createPoster({ poster, user_id }) {
         let { eventLocation } = poster
@@ -161,6 +161,9 @@ module.exports = {
                 break
             case 'draft':
                 posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
+                break
+            case 'rejected':
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, rejected: true }] })
                 break
         }
         return posters

@@ -1,9 +1,9 @@
 const PosterService = require('../service/poster-service')
 
 module.exports = {
-    async sendModerationMessage(req, res, next) {
+    async rejectPoster(req, res, next) {
         try {
-            return res.json(await PosterService.sendModerationMessage(req.body))
+            return res.json(await PosterService.rejectPoster(req.body))
         } catch (error) {
             next(error)
         }
