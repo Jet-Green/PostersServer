@@ -23,6 +23,11 @@ const PosterSchema = new Schema({
     moderationMessage: String,
     rejected: { type: Boolean, default: false },
 
+    publicationDate: Number,
+    endDate: Number,
+
+    createdDate: Number,
+
     isDraft: { type: Boolean, default: false }
 })
 
