@@ -77,6 +77,13 @@ module.exports = {
             next(error)
         }
     },
+    async hideById(req, res, next) {
+        try {
+            return res.json(await PosterService.findByIdAndHide(req.query._id, req.query.isHidden));
+        } catch (error) {
+            next(error)
+        }
+    },
     async getUserPosters(req, res, next) {
         try {
             return res.json(await PosterService.getUserPosters(req.body))

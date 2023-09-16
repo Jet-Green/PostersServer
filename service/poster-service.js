@@ -106,6 +106,15 @@ module.exports = {
    
         return await PosterModel.deleteOne({ _id: poster_id })
     },
+    async findByIdAndHide(poster_id, isHidden) {
+   
+        return await PosterModel.findByIdAndUpdate(poster_id, { isHidden: isHidden })
+    },
+    
+
+    async deleteOne(poster_id, email) {
+        return await PosterModel.deleteOne({ _id: poster_id })
+    },
     deleteMany() {
         return PosterModel.deleteMany({})
     },
