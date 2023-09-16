@@ -103,16 +103,7 @@ module.exports = {
         return PosterModel.findById(_id)
     },
     async deleteOne(poster_id, email) {
-        // let user = await UserModel.findOne({ email: email })
-        // for (let i = 0; i < user.posters.length; i++) {
-        //     if (user.posters[i]._id.toString() == poster_id.toString()) {
-        //         user.posters.splice(i, 1)
-        //     }
-        // }
-
-        // user.markModified('posters')
-
-        // await user.save()
+   
         return await PosterModel.deleteOne({ _id: poster_id })
     },
     deleteMany() {
@@ -151,13 +142,13 @@ module.exports = {
         let posters = []
         switch (poster_status) {
             case 'active':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, date: { $gte: Date.now() } }] })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false,  }] })
                 break
             case 'onModeration':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, date: { $gte: Date.now() } }] })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, }] })
                 break
             case 'archive':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, date: { $lt: Date.now() } }] })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() } }] }) // надо убирать в архив если endDate
                 break
             case 'draft':
                 posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })

@@ -72,7 +72,7 @@ module.exports = {
         try {
             const { _id, email } = req.query
 
-            return await PosterService.deleteOne(_id, email);
+            return res.json(await PosterService.deleteOne(_id, email));
         } catch (error) {
             next(error)
         }
