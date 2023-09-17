@@ -172,5 +172,8 @@ module.exports = {
     },
     buyPosters({ count, _id }) {
         return UserModel.findByIdAndUpdate(_id, { $inc: { 'subscription.count': count } })
+    },
+    subscriptionCount({ _id }) {
+        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 })
     }
 }

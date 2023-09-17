@@ -103,14 +103,19 @@ module.exports = {
         return PosterModel.findById(_id)
     },
     async deleteOne(poster_id, email) {
-   
+
         return await PosterModel.deleteOne({ _id: poster_id })
     },
     async findByIdAndHide(poster_id, isHidden) {
-   
+
         return await PosterModel.findByIdAndUpdate(poster_id, { isHidden: isHidden })
     },
-    
+    async findByIdAndProlong({ _id, publicationStart, publicationEnd, userId }) {
+
+        await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
+        return await PosterModel.findByIdAndUpdate(_id, { publicationDate: publicationStart, endDate: publicationEnd })
+    },
+
 
     async deleteOne(poster_id, email) {
         return await PosterModel.deleteOne({ _id: poster_id })
@@ -151,7 +156,7 @@ module.exports = {
         let posters = []
         switch (poster_status) {
             case 'active':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false,  }] })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, }] })
                 break
             case 'onModeration':
                 posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, }] })

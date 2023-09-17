@@ -84,6 +84,13 @@ module.exports = {
             next(error)
         }
     },
+    async prolongById(req, res, next) {
+        try {
+            return res.json(await PosterService.findByIdAndProlong(req.body));
+        } catch (error) {
+            next(error)
+        }
+    },
     async getUserPosters(req, res, next) {
         try {
             return res.json(await PosterService.getUserPosters(req.body))
