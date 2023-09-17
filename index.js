@@ -1,5 +1,6 @@
 // IMPORTS
 require('dotenv').config();
+require('aws-sdk/lib/maintenance_mode_message').suppress = true;
 
 const express = require('express');
 const cors = require('cors')
@@ -16,6 +17,8 @@ const appStateRouter = require('./routers/app-state-router')
 const priceRouter = require('./routers/price-router')
 // const errorFilter = require('./exception/errorFilter');
 // .USE
+
+mongoose.set('strictQuery', true);
 app.use(cors({
     origin: [process.env.CLIENT_URL, "http://localhost:3001"],
     credentials: true
