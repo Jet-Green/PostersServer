@@ -156,13 +156,13 @@ module.exports = {
         let posters = []
         switch (poster_status) {
             case 'active':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, }] })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, }] })
                 break
             case 'onModeration':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, }] })
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, rejected: false, }] })
                 break
             case 'archive':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() } }] }) // надо убирать в архив если endDate
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] }) 
                 break
             case 'draft':
                 posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
