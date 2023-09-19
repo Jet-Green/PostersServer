@@ -101,5 +101,13 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    async subscriptionCount(req, res, next) {
+        try {
+            return res.json(await UserService.subscriptionCount(req.body))
+        } catch (error) {
+            next(error)
+        }
     }
+    
 }

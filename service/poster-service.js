@@ -1,8 +1,7 @@
 const PosterModel = require('../models/poster-model.js')
-const PosterDraftModel = require('../models/poster-draft-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
-const { filter } = require('lodash');
+
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
 // Указываем аутентификацию в Yandex Object Storage
@@ -16,11 +15,11 @@ let s3 = new EasyYandexS3({
 });
 
 module.exports = {
-    async sendModerationMessage({ _id, message }) {
-        return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message })
+    async rejectPoster({ _id, message }) {
+        return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message, rejected: true })
     },
     async moderatePoster(_id, value) {
-        return PosterModel.findByIdAndUpdate(_id, { isModerated: value })
+        return PosterModel.findByIdAndUpdate(_id, { isModerated: value, rejected: false })
     },
     async createPoster({ poster, user_id }) {
         let { eventLocation } = poster
@@ -31,7 +30,7 @@ module.exports = {
         } else {
             poster.eventLocation = await EventLocationModel.create(eventLocation)
         }
-
+        poster.isDraft = false
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(user_id, {
@@ -54,7 +53,7 @@ module.exports = {
 
         let posterFromDb = await PosterModel.findById(posterId)
         if (!posterFromDb) {
-            posterFromDb = await PosterDraftModel.findById(posterId)
+            posterFromDb = await PosterModel.findById(posterId)
         }
         if (posterFromDb.image) {
             let spl = posterFromDb.image.split('/')
@@ -64,39 +63,49 @@ module.exports = {
         let uploadResult = await s3.Upload(buffer, '/plakat-city/');
         let filename = uploadResult.Location
         let update = await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
-        
-        if (!update) {   
-            await PosterDraftModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+
+        if (!update) {
+            await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
         }
 
         return filename
     },
-    async findMany(filters) {
-        let { eventLocation } = filters
-        let query = { $and: [{ isHidden: false }, { isModerated: true }] }
-        if (eventLocation) {
-            query.$and.push({ 'eventLocation.name': eventLocation })
+    async findMany(filter) {
+
+        let { searchText, eventTime, eventType, eventSubtype, eventLocation } = filter
+
+        let query = {
+            $and: [
+                { isHidden: false },
+                { isModerated: true },
+                { isDraft: false },
+                { rejected: false, },
+            ]
         }
-        if (filters.searchText) {
+
+        if (eventType) {
+            query.$and.push({ eventType: eventType })
+        }
+        if (eventSubtype) {
+            query.$and.push({ eventSubtype: eventSubtype })
+        }
+        // eventTime add
+
+
+
+        if (eventLocation != "") {
+            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
+        }
+        if (searchText) {
             query.$and.push({
                 $or: [
-                    { title: { $regex: filters.searchText, $options: 'i' } },
-                    { description: { $regex: filters.searchText, $options: 'i' } },
-                    { organizer: { $regex: filters.searchText, $options: 'i' } },
-                    { site: { $regex: filters.searchText, $options: 'i' } },
-                    { phone: { $regex: filters.searchText, $options: 'i' } },
-                    { email: { $regex: filters.searchText, $options: 'i' } },
-                    { eventType: { $regex: filters.searchText, $options: 'i' } },
+                    { title: { $regex: searchText, $options: 'i' } },
+                    { description: { $regex: searchText, $options: 'i' } },
+                    { organizer: { $regex: searchText, $options: 'i' } },
                 ]
             })
         }
-        if (filters.eventType) {
-            query.$and.push({
-                $or: [
-                    { eventType: { $regex: filters.eventType, $options: 'i' } },
-                ]
-            })
-        }
+
 
         return PosterModel.find(query)
     },
@@ -104,16 +113,21 @@ module.exports = {
         return PosterModel.findById(_id)
     },
     async deleteOne(poster_id, email) {
-        // let user = await UserModel.findOne({ email: email })
-        // for (let i = 0; i < user.posters.length; i++) {
-        //     if (user.posters[i]._id.toString() == poster_id.toString()) {
-        //         user.posters.splice(i, 1)
-        //     }
-        // }
 
-        // user.markModified('posters')
+        return await PosterModel.deleteOne({ _id: poster_id })
+    },
+    async findByIdAndHide(poster_id, isHidden) {
 
-        // await user.save()
+        return await PosterModel.findByIdAndUpdate(poster_id, { isHidden: isHidden })
+    },
+    async findByIdAndProlong({ _id, publicationStart, publicationEnd, userId }) {
+
+        await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
+        return await PosterModel.findByIdAndUpdate(_id, { publicationDate: publicationStart, endDate: publicationEnd })
+    },
+
+
+    async deleteOne(poster_id, email) {
         return await PosterModel.deleteOne({ _id: poster_id })
     },
     deleteMany() {
@@ -122,23 +136,27 @@ module.exports = {
     getUserPosters(postersIds) {
         return PosterModel.find({ _id: { $in: postersIds } })
     },
-    getPostersOnModeration() {
-        return PosterModel.find({ isModerated: false })
+    getPostersOnModeration(status) {
+        if (status == 'rejected') {
+            return PosterModel.find({ rejected: true })
+        } else {
+            return PosterModel.find({ isModerated: false, rejected: false })
+        }
     },
     async createDraft({ poster, userId }) {
         let { eventLocation } = poster
-
         let candidateEventLocationInDB = await EventLocationModel.findOne({ name: eventLocation.name })
         if (candidateEventLocationInDB) {
             poster.eventLocation = candidateEventLocationInDB
         } else {
             poster.eventLocation = await EventLocationModel.create(eventLocation)
         }
-        const posterFromDb = await PosterDraftModel.create(poster)
+        poster.isDraft = true
+        const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(userId, {
             $push: {
-                posterDrafts: posterFromDb._id
+                posters: posterFromDb._id
             }
         })
         return posterFromDb._id

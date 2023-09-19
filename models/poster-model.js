@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const PosterSchema = new Schema({
+    creator: {type: Schema.Types.ObjectId, ref: 'User'},
     title: { type: String },
     description: { type: String },
     image: { type: String },
@@ -9,14 +10,26 @@ const PosterSchema = new Schema({
     organizer: { type: String },
     phone: { type: String },
     email: { type: String },
+
+    eventIsOn: { type: String },
     date: { type: Number },
     workingTime: { type: String },
+
     eventType: { type: String },
+    eventSubtype: { type: String },
 
     isHidden: { type: Boolean, default: false },
 
     isModerated: { type: Boolean, default: false },
-    moderationMessage: String
+    moderationMessage: String,
+    rejected: { type: Boolean, default: false },
+
+    publicationDate: Number,
+    endDate: Number,
+
+    createdDate: Number, 
+
+    isDraft: { type: Boolean, default: false }
 })
 
 module.exports = model('Poster', PosterSchema);

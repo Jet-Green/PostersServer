@@ -12,18 +12,19 @@ const router = Router()
 router.post('/create', PosterController.create)
 router.post('/create-draft', PosterController.createDraft)
 
+router.get('/get-posters', PosterController.getPosters)
 router.post('/get-all', PosterController.getAll)
 router.post('/upload-image', multer().any(), PosterController.uploadImage)
 router.get('/delete-by-id', PosterController.deleteById)
-router.get('/get-posters-on-moderaion', PosterController.getPostersOnModeration)
-
+router.get('/hide-by-id', PosterController.hideById)
+router.post('/prolong-by-id', PosterController.prolongById)
+router.get('/get-posters-on-moderation', PosterController.getPostersOnModeration)
 router.get('/get-by-id', PosterController.getById)
-router.get('/get-posters-to-moderation', PosterController.getPostersOnModeration)
 router.post('/get-user-posters', PosterController.getUserPosters)
 router.post('/update', PosterController.updatePoster)
 router.get('/clear', PosterController.deleteMany)
 
 router.get('/moderate', PosterController.moderatePoster)
-router.post('/send-moderation-message', PosterController.sendModerationMessage)
+router.post('/reject-poster', PosterController.rejectPoster)
 
 module.exports = router

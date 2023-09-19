@@ -150,7 +150,6 @@ module.exports = {
         await TokenService.removeToken(refreshToken)
         const tokens = TokenService.generateTokens({ email: user.email, password: user.password, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
-        console.log(tokens.refreshToken)
 
         let userToSend = new UserDto(user)
 
@@ -173,5 +172,8 @@ module.exports = {
     },
     buyPosters({ count, _id }) {
         return UserModel.findByIdAndUpdate(_id, { $inc: { 'subscription.count': count } })
+    },
+    subscriptionCount({ _id }) {
+        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 })
     }
 }

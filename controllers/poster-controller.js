@@ -1,9 +1,9 @@
 const PosterService = require('../service/poster-service')
 
 module.exports = {
-    async sendModerationMessage(req, res, next) {
+    async rejectPoster(req, res, next) {
         try {
-            return res.json(await PosterService.sendModerationMessage(req.body))
+            return res.json(await PosterService.rejectPoster(req.body))
         } catch (error) {
             next(error)
         }
@@ -32,7 +32,7 @@ module.exports = {
     },
     async getPostersOnModeration(req, res, next) {
         try {
-            return res.json(await PosterService.getPostersOnModeration())
+            return res.json(await PosterService.getPostersOnModeration(req.query.status))
         } catch (error) {
             next(error)
         }
@@ -72,7 +72,21 @@ module.exports = {
         try {
             const { _id, email } = req.query
 
-            return await PosterService.deleteOne(_id, email);
+            return res.json(await PosterService.deleteOne(_id, email));
+        } catch (error) {
+            next(error)
+        }
+    },
+    async hideById(req, res, next) {
+        try {
+            return res.json(await PosterService.findByIdAndHide(req.query._id, req.query.isHidden));
+        } catch (error) {
+            next(error)
+        }
+    },
+    async prolongById(req, res, next) {
+        try {
+            return res.json(await PosterService.findByIdAndProlong(req.body));
         } catch (error) {
             next(error)
         }
@@ -84,18 +98,18 @@ module.exports = {
             next(error)
         }
     },
-    async getPostersOnModeration(req, res, next) {
-        try {
-            return res.json(await PosterService.getPostersOnModeration())
-        } catch (error) {
-            next(error)
-        }
-    },
     async createDraft(req, res, next) {
         try {
             return res.json(await PosterService.createDraft(req.body))
         } catch (error) {
             next(error)
         }
-    }
+    },
+    async getPosters(req, res, next) {
+        try {
+            return res.json(await PosterService.getPosters(req.query))
+        } catch (error) {
+            next(error)
+        }
+    },
 }

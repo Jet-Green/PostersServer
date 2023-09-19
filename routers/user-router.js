@@ -14,7 +14,9 @@ router.post('/logout', userController.logout)
 router.post('/forgot-password', userController.sendResetLink)
 router.post('/reset-password', userController.resetPassword)
 
-router.get('/clear-users', userController.clearUsers)
+// router.get('/clear-users', userController.clearUsers)
 
 router.post('/buy-posters', userController.buyPosters)
+router.post('/subscription-count', userController.subscriptionCount)
+
 module.exports = router
