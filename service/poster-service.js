@@ -70,32 +70,42 @@ module.exports = {
 
         return filename
     },
-    async findMany(filters) {
-        let { eventLocation } = filters
-        let query = { $and: [{ isHidden: false }, { isModerated: true }] }
-        if (eventLocation) {
-            query.$and.push({ 'eventLocation.name': eventLocation })
+    async findMany(filter) {
+
+        let { searchText, eventTime, eventType, eventSubtype, eventLocation } = filter
+
+        let query = {
+            $and: [
+                { isHidden: false },
+                { isModerated: true },
+                { isDraft: false },
+                { rejected: false, },
+            ]
         }
-        if (filters.searchText) {
+
+        if (eventType) {
+            query.$and.push({ eventType: eventType })
+        }
+        if (eventSubtype) {
+            query.$and.push({ eventSubtype: eventSubtype })
+        }
+        // eventTime add
+
+
+
+        if (eventLocation != "") {
+            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
+        }
+        if (searchText) {
             query.$and.push({
                 $or: [
-                    { title: { $regex: filters.searchText, $options: 'i' } },
-                    { description: { $regex: filters.searchText, $options: 'i' } },
-                    { organizer: { $regex: filters.searchText, $options: 'i' } },
-                    { site: { $regex: filters.searchText, $options: 'i' } },
-                    { phone: { $regex: filters.searchText, $options: 'i' } },
-                    { email: { $regex: filters.searchText, $options: 'i' } },
-                    { eventType: { $regex: filters.searchText, $options: 'i' } },
+                    { title: { $regex: searchText, $options: 'i' } },
+                    { description: { $regex: searchText, $options: 'i' } },
+                    { organizer: { $regex: searchText, $options: 'i' } },
                 ]
             })
         }
-        if (filters.eventType) {
-            query.$and.push({
-                $or: [
-                    { eventType: { $regex: filters.eventType, $options: 'i' } },
-                ]
-            })
-        }
+
 
         return PosterModel.find(query)
     },
@@ -162,7 +172,7 @@ module.exports = {
                 posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, rejected: false, }] })
                 break
             case 'archive':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] }) 
+                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] })
                 break
             case 'draft':
                 posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
