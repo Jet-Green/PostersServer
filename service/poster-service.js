@@ -19,7 +19,11 @@ module.exports = {
         return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message, rejected: true })
     },
     async moderatePoster(_id, value) {
-        return PosterModel.findByIdAndUpdate(_id, { isModerated: value, rejected: false })
+        // 2592000000 - 30 дней
+        return PosterModel.findByIdAndUpdate(_id, {
+            isModerated: value, rejected: false, publicationDate: Date.now(),
+            endDate: Date.now() + 2592000000,
+        })
     },
     async createPoster({ poster, user_id }) {
         let { eventLocation } = poster
