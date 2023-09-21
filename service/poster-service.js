@@ -46,7 +46,13 @@ module.exports = {
         return posterFromDb._id.toString()
     },
     async updatePoster(poster) {
-        let posterFromDb = await PosterModel.findOneAndUpdate({ _id: poster._id }, poster, { new: true })
+        let _id = poster._id
+        delete poster._id
+
+        poster.isModerated = false
+        poster.rejected = false
+
+        let posterFromDb = await PosterModel.findOneAndUpdate({ _id }, poster, { new: true })
         return posterFromDb._id
     },
     async updateImageUrl(req) {
