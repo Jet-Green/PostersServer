@@ -18,11 +18,13 @@ module.exports = {
     async rejectPoster({ _id, message }) {
         return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message, rejected: true })
     },
-    async moderatePoster(_id, value) {
+    async moderatePoster(_id, userId) {
+       
+        await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
         // 2592000000 - 30 дней
         return PosterModel.findByIdAndUpdate(_id, {
-            isModerated: value, rejected: false, publicationDate: Date.now(),
-            endDate: Date.now() + 2592000000,
+            isModerated: true, rejected: false, publicationDate: Date.now(),
+            endDate: Date.now() + 2592000000
         })
     },
     async createPoster({ poster, user_id }) {

@@ -10,7 +10,7 @@ module.exports = {
     },
     async moderatePoster(req, res, next) {
         try {
-            return res.json(await PosterService.moderatePoster(req.query._id, req.query.value))
+            return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
         } catch (error) {
             next(error)
         }
