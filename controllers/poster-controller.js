@@ -112,4 +112,11 @@ module.exports = {
             next(error)
         }
     },
+    async editPoster(req, res, next) {
+        try {
+            return res.json(await PosterService.editPoster(req.body, req.query._id))
+        } catch (error) {
+            next(error)
+        }
+    }
 }

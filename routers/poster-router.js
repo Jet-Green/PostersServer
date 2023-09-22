@@ -24,6 +24,8 @@ router.post('/get-user-posters', PosterController.getUserPosters)
 router.post('/update', PosterController.updatePoster)
 router.get('/clear', PosterController.deleteMany)
 
+router.post('/edit', PosterController.editPoster)
+
 router.get('/moderate', PosterController.moderatePoster)
 router.post('/reject-poster', PosterController.rejectPoster)
 

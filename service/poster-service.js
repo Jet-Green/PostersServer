@@ -19,7 +19,7 @@ module.exports = {
         return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message, rejected: true })
     },
     async moderatePoster(_id, userId) {
-       
+
         await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
         // 2592000000 - 30 дней
         return PosterModel.findByIdAndUpdate(_id, {
@@ -194,5 +194,8 @@ module.exports = {
                 break
         }
         return posters
+    },
+    async editPoster(poster, _id) {
+        return PosterModel.findByIdAndUpdate(_id, poster)
     }
 }
