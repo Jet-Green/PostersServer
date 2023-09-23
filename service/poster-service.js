@@ -120,7 +120,7 @@ module.exports = {
         }
 
         const cursor = PosterModel.find(query, null).sort({ publicationDate: -1, date: -1 }).skip(skip).limit(limit).cursor();
-        // const cursor = PosterModel.find(query, null, { sort: 'start' }).skip(skip).limit(limit).cursor();
+       
         const results = [];
         for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
             results.push(doc);
