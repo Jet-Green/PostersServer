@@ -37,6 +37,8 @@ module.exports = {
             poster.eventLocation = await EventLocationModel.create(eventLocation)
         }
         poster.isDraft = false
+        poster.rejected = false
+        poster.isModerated = false
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(user_id, {
