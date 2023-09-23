@@ -83,9 +83,10 @@ module.exports = {
         return filename
     },
     async findMany(filter) {
-
-        let { searchText, eventTime, eventType, eventSubtype, eventLocation } = filter
-
+        let { searchText, eventTime, eventType, eventSubtype, eventLocation, page } = filter
+        const limit = 20;
+        const sitePage = page;
+        const skip = (sitePage - 1) * limit;
         let query = {
             $and: [
                 { isHidden: false },
@@ -118,8 +119,16 @@ module.exports = {
             })
         }
 
+        const cursor = PosterModel.find(query, null).sort({ publicationDate: -1, date: -1 }).skip(skip).limit(limit).cursor();
+        // const cursor = PosterModel.find(query, null, { sort: 'start' }).skip(skip).limit(limit).cursor();
+        const results = [];
+        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
+            results.push(doc);
+        }
 
-        return PosterModel.find(query)
+        return results
+
+
     },
     async getById(_id) {
         return PosterModel.findById(_id)
