@@ -54,7 +54,7 @@ module.exports = {
             await EventLocationModel.create({ name: location })
         }
 
-        poster.eventLocation = eventLocation
+        poster.eventLocation.name = eventLocation.name
         poster.isDraft = false
         poster.rejected = false
         poster.isModerated = false
