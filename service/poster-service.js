@@ -30,13 +30,31 @@ module.exports = {
     },
     async createPoster({ poster, user_id }) {
         let { eventLocation } = poster
-
-        let candidateEventLocationInDB = await EventLocationModel.findOne({ name: eventLocation.name })
-        if (candidateEventLocationInDB) {
-            poster.eventLocation = candidateEventLocationInDB
-        } else {
-            poster.eventLocation = await EventLocationModel.create(eventLocation)
+        let city = eventLocation.city_with_type
+        let settlement = eventLocation.settlement_with_type
+        let region = eventLocation.region_with_type
+        let area = eventLocation.area_with_type
+        let capital_marker = eventLocation.capital_marker
+        let location = ''
+        if (region && capital_marker != 2 && region != city) {
+            location = `${region}, `
         }
+        if (city) {
+            location = `${location}${city}`
+        }
+        if (area) {
+            location = `${location}${area}`
+        }
+        if (settlement) {
+            location = `${location}, ${settlement}`
+        }
+
+        let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
+        if (!candidateEventLocationInDB) {
+            await EventLocationModel.create({ name: location })
+        }
+
+        poster.eventLocation = eventLocation
         poster.isDraft = false
         poster.rejected = false
         poster.isModerated = false
