@@ -122,7 +122,7 @@ module.exports = {
         }
 
         const cursor = PosterModel.find(query, null).sort({ publicationDate: -1, date: -1 }).skip(skip).limit(limit).cursor();
-       
+
         const results = [];
         for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
             results.push(doc);
@@ -161,9 +161,9 @@ module.exports = {
     },
     getPostersOnModeration(status) {
         if (status == 'rejected') {
-            return PosterModel.find({ rejected: true })
+            return PosterModel.find({ rejected: true }).sort({ publicationDate: -1})
         } else {
-            return PosterModel.find({ isModerated: false, rejected: false })
+            return PosterModel.find({ isModerated: false, rejected: false }).sort({ publicationDate: -1})
         }
     },
     async createDraft({ poster, userId }) {
@@ -189,19 +189,29 @@ module.exports = {
         let posters = []
         switch (poster_status) {
             case 'active':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, }] })
+                posters = await PosterModel
+                .find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, }] })
+                .sort({ publicationDate: -1 })
                 break
             case 'onModeration':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, rejected: false, }] })
+                posters = await PosterModel
+                .find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, rejected: false, }] })
+                .sort({ publicationDate: -1 })
                 break
             case 'archive':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] })
+                posters = await PosterModel
+                .find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] })
+                .sort({ publicationDate: -1 })
                 break
             case 'draft':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
+                posters = await PosterModel
+                .find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
+                .sort({ publicationDate: -1 })
                 break
             case 'rejected':
-                posters = await PosterModel.find({ $and: [{ _id: { $in: userFromDb.posters }, rejected: true }] })
+                posters = await PosterModel
+                .find({ $and: [{ _id: { $in: userFromDb.posters }, rejected: true }] })
+                .sort({ publicationDate: -1 })
                 break
         }
         return posters
