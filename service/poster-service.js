@@ -20,6 +20,7 @@ module.exports = {
     },
     async moderatePoster(_id, userId) {
 
+        //! перед тем как вычесть нужно проверить есть ли оплаченные афишы, если нет сообщить об этом на клиенте 
         await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
         // 2592000000 - 30 дней
         return PosterModel.findByIdAndUpdate(_id, {
