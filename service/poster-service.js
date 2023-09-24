@@ -76,7 +76,7 @@ module.exports = {
 
         let uploadResult = await s3.Upload(buffer, '/plakat-city/');
         let filename = uploadResult.Location
-        let update = await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
+        let update = await PosterModel.findByIdAndUpdate(posterId, { image: filename })
 
         if (!update) {
             await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
@@ -161,9 +161,9 @@ module.exports = {
     },
     getPostersOnModeration(status) {
         if (status == 'rejected') {
-            return PosterModel.find({ rejected: true }).sort({ publicationDate: -1})
+            return PosterModel.find({ rejected: true }).sort({ publicationDate: -1 })
         } else {
-            return PosterModel.find({ isModerated: false, rejected: false }).sort({ publicationDate: -1})
+            return PosterModel.find({ isModerated: false, rejected: false }).sort({ publicationDate: -1 })
         }
     },
     async createDraft({ poster, userId }) {
@@ -190,33 +190,40 @@ module.exports = {
         switch (poster_status) {
             case 'active':
                 posters = await PosterModel
-                .find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, }] })
-                .sort({ publicationDate: -1 })
+                    .find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, }] })
+                    .sort({ publicationDate: -1 })
                 break
             case 'onModeration':
                 posters = await PosterModel
-                .find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, rejected: false, }] })
-                .sort({ publicationDate: -1 })
+                    .find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: false, isDraft: false, rejected: false, }] })
+                    .sort({ publicationDate: -1 })
                 break
             case 'archive':
                 posters = await PosterModel
-                .find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] })
-                .sort({ publicationDate: -1 })
+                    .find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] })
+                    .sort({ publicationDate: -1 })
                 break
             case 'draft':
                 posters = await PosterModel
-                .find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
-                .sort({ publicationDate: -1 })
+                    .find({ $and: [{ _id: { $in: userFromDb.posters }, isDraft: true }] })
+                    .sort({ publicationDate: -1 })
                 break
             case 'rejected':
                 posters = await PosterModel
-                .find({ $and: [{ _id: { $in: userFromDb.posters }, rejected: true }] })
-                .sort({ publicationDate: -1 })
+                    .find({ $and: [{ _id: { $in: userFromDb.posters }, rejected: true }] })
+                    .sort({ publicationDate: -1 })
                 break
         }
         return posters
     },
     async editPoster(poster, _id) {
-        return PosterModel.findByIdAndUpdate(_id, poster)
+        let posterFromDb = await PosterModel.findById(_id)
+
+        if (!posterFromDb.isDraft && posterFromDb.rejected && !posterFromDb.isModerated) {
+            posterFromDb.rejected = false
+        }
+        Object.assign(posterFromDb, poster)
+
+        return posterFromDb.save()
     }
 }
