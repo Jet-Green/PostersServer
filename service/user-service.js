@@ -2,6 +2,7 @@ const UserModel = require('../models/user-model')
 const RoleModel = require('../models/role-model')
 const bcrypt = require('bcryptjs');
 const TokenService = require('../service/token-service')
+const EventLogService = require('../service/event-log-service')
 const { sendMail } = require('../middleware/mailer');
 
 const UserDto = require('../dtos/user-dto');
@@ -170,8 +171,9 @@ module.exports = {
             new: true
         })
     },
-    buyPosters({ count, _id }) {
-        return UserModel.findByIdAndUpdate(_id, { $inc: { 'subscription.count': count } })
+    buyPosters(buyEvent) {
+        EventLogService.buyPostersLog(buyEvent)
+        return UserModel.findByIdAndUpdate({ _id: buyEvent._id }, { $inc: { 'subscription.count': buyEvent.numberPosters } })
     },
     subscriptionCount({ _id }) {
         return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 })

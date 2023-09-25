@@ -1,6 +1,7 @@
 const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
+const EventLogService = require('../service/event-log-service')
 
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
@@ -22,6 +23,12 @@ module.exports = {
 
         //! перед тем как вычесть нужно проверить есть ли оплаченные афишы, если нет сообщить об этом на клиенте 
         await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
+        // for log
+        let setEvent = {}
+        setEvent._id = userId
+        await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
+        await EventLogService.setPostersLog(setEvent)
+
         // 2592000000 - 30 дней
         return PosterModel.findByIdAndUpdate(_id, {
             isModerated: true, rejected: false, publicationDate: Date.now(),
@@ -36,6 +43,7 @@ module.exports = {
         let area = eventLocation.area_with_type
         let capital_marker = eventLocation.capital_marker
         let location = ''
+        // не удалять пробелы в строках
         if (region && capital_marker != 2 && region != city) {
             location = `${region}, `
         }
@@ -48,6 +56,7 @@ module.exports = {
         if (settlement) {
             location = `${location}, ${settlement}`
         }
+        // не удалять пробелы в строках
 
         let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
         if (!candidateEventLocationInDB) {
@@ -164,7 +173,14 @@ module.exports = {
     },
     async findByIdAndProlong({ _id, publicationStart, publicationEnd, userId }) {
 
+
         await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
+
+        let setEvent = {}
+        setEvent._id = userId
+        await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
+        await EventLogService.prolongPostersLog(setEvent)
+
         return await PosterModel.findByIdAndUpdate(_id, { publicationDate: publicationStart, endDate: publicationEnd })
     },
 
