@@ -25,6 +25,16 @@ module.exports = {
             next(error)
         }
     },
+    async deleteEventSubtype(req, res, next) {
+        try {
+            let category_name = req.body.category_name
+            let subcategory_name = req.body.subcategory_name
+
+            return res.json(await appStateService.deleteEventSubtype(category_name, subcategory_name))
+        } catch (error) {
+            next(error)
+        }
+    },
     async deleteEventType(req, res, next) {
         try {
             return res.json(await appStateService.deleteEventType(req.body.eventType))
