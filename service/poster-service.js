@@ -66,6 +66,8 @@ module.exports = {
         poster.eventLocation.name = eventLocation.name
 
         poster.isDraft = true
+        poster.isModerated = false
+        poster.rejected = false
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(userId, {
@@ -236,9 +238,9 @@ module.exports = {
     },
     getPostersOnModeration(status) {
         if (status == 'rejected') {
-            return PosterModel.find({ rejected: true }).sort({ publicationDate: -1 })
+            return PosterModel.find({ rejected: true, isDraft: false }).sort({ publicationDate: -1 })
         } else {
-            return PosterModel.find({ isModerated: false, rejected: false }).sort({ publicationDate: -1 })
+            return PosterModel.find({ isModerated: false, rejected: false, isDraft: false }).sort({ publicationDate: -1 })
         }
     },
     async getPosters({ user_id, poster_status }) {
@@ -267,7 +269,7 @@ module.exports = {
                 break
             case 'rejected':
                 posters = await PosterModel
-                    .find({ $and: [{ _id: { $in: userFromDb.posters }, rejected: true }] })
+                    .find({ $and: [{ _id: { $in: userFromDb.posters }, rejected: true, isDraft: false }] })
                     .sort({ publicationDate: -1 })
                 break
         }
