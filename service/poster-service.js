@@ -35,6 +35,46 @@ module.exports = {
             endDate: Date.now() + 2592000000
         })
     },
+    async createDraft({ poster, userId }) {
+        let { eventLocation } = poster
+        let city = eventLocation.city_with_type
+        let settlement = eventLocation.settlement_with_type
+        let region = eventLocation.region_with_type
+        let area = eventLocation.area_with_type
+        let capital_marker = eventLocation.capital_marker
+        let location = ''
+        // не удалять пробелы в строках
+        if (region && capital_marker != 2 && region != city) {
+            location = `${region}, `
+        }
+        if (city) {
+            location = `${location}${city}`
+        }
+        if (area) {
+            location = `${location}${area}`
+        }
+        if (settlement) {
+            location = `${location}, ${settlement}`
+        }
+        // не удалять пробелы в строках
+
+        let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
+        if (!candidateEventLocationInDB) {
+            await EventLocationModel.create({ name: location })
+        }
+
+        poster.eventLocation.name = eventLocation.name
+
+        poster.isDraft = true
+        const posterFromDb = await PosterModel.create(poster)
+
+        await UserModel.findByIdAndUpdate(userId, {
+            $push: {
+                posters: posterFromDb._id
+            }
+        })
+        return posterFromDb._id.toString()
+    },
     async createPoster({ poster, user_id }) {
         let { eventLocation } = poster
         let city = eventLocation.city_with_type
@@ -201,24 +241,6 @@ module.exports = {
             return PosterModel.find({ isModerated: false, rejected: false }).sort({ publicationDate: -1 })
         }
     },
-    async createDraft({ poster, userId }) {
-        let { eventLocation } = poster
-        let candidateEventLocationInDB = await EventLocationModel.findOne({ name: eventLocation.name })
-        if (candidateEventLocationInDB) {
-            poster.eventLocation = candidateEventLocationInDB
-        } else {
-            poster.eventLocation = await EventLocationModel.create(eventLocation)
-        }
-        poster.isDraft = true
-        const posterFromDb = await PosterModel.create(poster)
-
-        await UserModel.findByIdAndUpdate(userId, {
-            $push: {
-                posters: posterFromDb._id
-            }
-        })
-        return posterFromDb._id.toString()
-    },
     async getPosters({ user_id, poster_status }) {
         let userFromDb = await UserModel.findById(user_id)
         let posters = []
@@ -254,10 +276,11 @@ module.exports = {
     async editPoster(poster, _id) {
         let posterFromDb = await PosterModel.findById(_id)
 
-        if (!posterFromDb.isDraft && posterFromDb.rejected && !posterFromDb.isModerated) {
-            posterFromDb.rejected = false
-        }
         Object.assign(posterFromDb, poster)
+
+        posterFromDb.isDraft = false
+        posterFromDb.isModerated = false
+        posterFromDb.rejected = false
 
         return posterFromDb.save()
     }
