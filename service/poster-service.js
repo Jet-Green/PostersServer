@@ -22,7 +22,11 @@ module.exports = {
     async moderatePoster(_id, userId) {
 
         //! перед тем как вычесть нужно проверить есть ли оплаченные афишы, если нет сообщить об этом на клиенте 
-        await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
+        await UserModel.findByIdAndUpdate(userId, { $cond: [{ 'subscription.count': { $gte: 0 } }, { $inc: { 'subscription.count': -1 } }, { $inc: { 'subscription.count': 0 } }] })
+
+
+
+
         // for log
         let setEvent = {}
         setEvent._id = userId
