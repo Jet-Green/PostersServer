@@ -16,6 +16,7 @@ const eventLocationRouter = require('./routers/event-location-router')
 const appStateRouter = require('./routers/app-state-router')
 const priceRouter = require('./routers/price-router')
 const eventLogRouter = require('./routers/event-log-router')
+const ordRouter = require('./routers/ord-router')
 // const errorFilter = require('./exception/errorFilter');
 // .USE
 
@@ -39,6 +40,7 @@ app.use('/event-location', eventLocationRouter)
 app.use('/app-state', appStateRouter)
 app.use('/price', priceRouter )
 app.use('/event-log',eventLogRouter)
+app.use('/ord',ordRouter)
 
 // START SERVER
 function startServer() {
