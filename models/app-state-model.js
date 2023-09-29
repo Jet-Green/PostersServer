@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const AppStateModel = new Schema({
-    eventTypes: Array
+    eventTypes: [Object]
 })
 
 module.exports = model('AppState', AppStateModel);
