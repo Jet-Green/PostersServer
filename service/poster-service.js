@@ -37,33 +37,36 @@ module.exports = {
     },
     async createDraft({ poster, userId }) {
         let { eventLocation } = poster
-        let city = eventLocation.city_with_type
-        let settlement = eventLocation.settlement_with_type
-        let region = eventLocation.region_with_type
-        let area = eventLocation.area_with_type
-        let capital_marker = eventLocation.capital_marker
-        let location = ''
-        // не удалять пробелы в строках
-        if (region && capital_marker != 2 && region != city) {
-            location = `${region}, `
-        }
-        if (city) {
-            location = `${location}${city}`
-        }
-        if (area) {
-            location = `${location}${area}`
-        }
-        if (settlement) {
-            location = `${location}, ${settlement}`
-        }
-        // не удалять пробелы в строках
+        if (eventLocation) {
 
-        let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
-        if (!candidateEventLocationInDB && location) {
-            await EventLocationModel.create({ name: location })
-        }
+            let city = eventLocation.city_with_type
+            let settlement = eventLocation.settlement_with_type
+            let region = eventLocation.region_with_type
+            let area = eventLocation.area_with_type
+            let capital_marker = eventLocation.capital_marker
+            let location = ''
+            // не удалять пробелы в строках
+            if (region && capital_marker != 2 && region != city) {
+                location = `${region}, `
+            }
+            if (city) {
+                location = `${location}${city}`
+            }
+            if (area) {
+                location = `${location}${area}`
+            }
+            if (settlement) {
+                location = `${location}, ${settlement}`
+            }
+            // не удалять пробелы в строках
 
-        poster.eventLocation.name = eventLocation.name
+            let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
+            if (!candidateEventLocationInDB && location) {
+                await EventLocationModel.create({ name: location })
+            }
+
+            poster.eventLocation.name = eventLocation.name
+        }
 
         poster.isDraft = true
         poster.isModerated = false
