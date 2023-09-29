@@ -59,7 +59,7 @@ module.exports = {
         // не удалять пробелы в строках
 
         let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
-        if (!candidateEventLocationInDB) {
+        if (!candidateEventLocationInDB && location) {
             await EventLocationModel.create({ name: location })
         }
 
