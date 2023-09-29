@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const PosterSchema = new Schema({
-    creator: {type: Schema.Types.ObjectId, ref: 'User'},
+    creator: { type: Schema.Types.ObjectId, ref: 'User' },
     title: { type: String },
     description: { type: String },
     image: { type: String },
@@ -18,6 +18,9 @@ const PosterSchema = new Schema({
     eventType: { type: String },
     eventSubtype: { type: String },
 
+    ageLimit: { type: String },
+    price: { type: String },
+
     isHidden: { type: Boolean, default: false },
 
     isModerated: { type: Boolean, default: false },
@@ -27,7 +30,7 @@ const PosterSchema = new Schema({
     publicationDate: Number,
     endDate: Number,
 
-    createdDate: Number, 
+    createdDate: Number,
 
     isDraft: { type: Boolean, default: false }
 })
