@@ -254,8 +254,7 @@ module.exports = {
     async findByIdAndProlong({ _id, publicationStart, publicationEnd, userId }) {
 
 
-        await UserModel.findByIdAndUpdate(userId, {  $cond:
-            [{ 'subscription.count': { $gte: 0 } }, { $inc: { 'subscription.count': -1 } }, { $inc: { 'subscription.count': 0 } }]})
+        await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
 
         let setEvent = {}
         setEvent._id = userId
