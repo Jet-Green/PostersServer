@@ -166,7 +166,7 @@ module.exports = {
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventSubtype, eventLocation, page } = filter
-        console.log(filter)
+
         const limit = 20;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
