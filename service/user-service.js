@@ -70,10 +70,12 @@ module.exports = {
                     <meta charset="UTF-8">
                     <meta http-equiv="X-UA-Compatible" content="IE=edge">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Document</title>
+                    <title>PlPo - место для ваших афиш</title>
                 </head>
                 <body>
-                    <h1>Чтобы поменять пароль перейдите по ссылке: </h1> <a href="${link}">${link}</a>
+                    <h3> PlPo восстановление пароля </h3> 
+                    <h4> Перейдите по ссылке: </h4> 
+                    <p><a href="${link}">${link}</a></p>
                 </body>
             </html>`,
             [candidate.email], 'Восстанoвление пароля')
