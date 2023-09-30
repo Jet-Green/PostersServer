@@ -162,7 +162,8 @@ module.exports = {
         return filename
     },
     async findMany(filter) {
-        let { searchText, eventTime, eventType, eventSubtype, eventLocation, page } = filter
+        let { searchText, date, eventType, eventSubtype, eventLocation, page } = filter
+        console.log(filter)
         const limit = 20;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -174,14 +175,43 @@ module.exports = {
                 { rejected: false, },
             ]
         }
-
         if (eventType) {
             query.$and.push({ eventType: eventType })
         }
         if (eventSubtype) {
             query.$and.push({ eventSubtype: eventSubtype })
         }
-        // eventTime add
+        switch (date) {
+            case 'Сегодня':
+                query.$and.push({
+                    date:
+                    {
+                        $gt: new Date().setHours(0, 0, 0, 0),
+                        $lt: new Date().setHours(23, 59, 59, 999)
+                    }
+                })
+                break
+            case 'На неделе':
+                query.$and.push({
+                    date:
+                    {
+                        $gt: new Date().setHours(0, 0, 0, 0),
+                        $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 7
+                    }
+                })
+                break
+            case 'Скоро':
+                query.$and.push(
+                    {
+                        date:
+                        {
+                            $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
+                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 14
+                        }
+                    })
+                break
+
+        }
 
 
 
