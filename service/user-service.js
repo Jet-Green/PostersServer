@@ -100,8 +100,8 @@ module.exports = {
         }
 
         const hashPassword = await bcrypt.hash(password, 3)
-        const adminUserRole = await RoleModel.findOne({ value: 'admin' })
-        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone, roles: [adminUserRole], })
+        const defaultUserRole = await RoleModel.findOne({ value: 'user' })
+        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone, roles: [defaultUserRole], })
 
         const tokens = TokenService.generateTokens({ email, hashPassword, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
