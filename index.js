@@ -9,6 +9,8 @@ const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser');
 
+const history = require('connect-history-api-fallback');
+
 // IMPORT ROUTES
 const userRouter = require('./routers/user-router')
 const posterRouter = require('./routers/poster-router')
@@ -19,6 +21,8 @@ const eventLogRouter = require('./routers/event-log-router')
 const ordRouter = require('./routers/ord-router')
 // const errorFilter = require('./exception/errorFilter');
 // .USE
+
+app.use(history())
 
 mongoose.set('strictQuery', true);
 app.use(cors({
@@ -39,9 +43,9 @@ app.use('/auth', userRouter)
 app.use('/poster', posterRouter)
 app.use('/event-location', eventLocationRouter)
 app.use('/app-state', appStateRouter)
-app.use('/price', priceRouter )
-app.use('/event-log',eventLogRouter)
-app.use('/ord',ordRouter)
+app.use('/price', priceRouter)
+app.use('/event-log', eventLogRouter)
+app.use('/ord', ordRouter)
 
 // START SERVER
 function startServer() {
