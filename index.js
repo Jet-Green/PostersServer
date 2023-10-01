@@ -22,7 +22,7 @@ const ordRouter = require('./routers/ord-router')
 
 mongoose.set('strictQuery', true);
 app.use(cors({
-    origin: [process.env.CLIENT_URL, "http://localhost:3001"],
+    origin: [process.env.CLIENT_URL, "http://localhost:3001", "https://plpo.ru"],
     credentials: true
 }))
 app.use(express.json())
