@@ -39,7 +39,7 @@ module.exports = {
     async registration(req, res, next) {
         try {
             const { email, password, firstname, lastname, phone } = req.body;
-            console.log(req.body)
+         
             const userData = await UserService.registration(email, password, firstname, lastname, phone)
 
             // добавить флаг secure: true чтобы активировать https
