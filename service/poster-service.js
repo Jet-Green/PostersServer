@@ -24,7 +24,7 @@ module.exports = {
         //! перед тем как вычесть нужно проверить есть ли оплаченные афишы, если нет сообщить об этом на клиенте
         // await UserModel.findByIdAndUpdate(userId, { $cond:
         //     [{ 'subscription.count': { $gte: 0 } }, { $inc: { 'subscription.count': -1 } }, { $inc: { 'subscription.count': 0 } }] })
-       
+
         await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
 
 
@@ -213,7 +213,14 @@ module.exports = {
                         }
                     })
                 break
-
+            default:
+                query.$and.push(
+                    {
+                        date:
+                        {
+                            $gt: new Date()
+                        }
+                    })
         }
 
 
