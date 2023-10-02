@@ -179,6 +179,6 @@ module.exports = {
         return UserModel.findByIdAndUpdate({ _id: buyEvent._id }, { $inc: { 'subscription.count': buyEvent.numberPosters } })
     },
     subscriptionCount({ _id }) {
-        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 })
+        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 , })
     }
 }

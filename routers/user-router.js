@@ -1,6 +1,6 @@
 const Router = require('express').Router
 const userController = require('../controllers/user-controller')
-
+const authMiddleware = require('../middleware/auth-middleware')
 
 const router = Router()
 
@@ -16,7 +16,7 @@ router.post('/reset-password', userController.resetPassword)
 
 // router.get('/clear-users', userController.clearUsers)
 
-router.post('/buy-posters', userController.buyPosters)
-router.post('/subscription-count', userController.subscriptionCount)
+router.post('/buy-posters',authMiddleware, userController.buyPosters)
+router.post('/subscription-count',authMiddleware, userController.subscriptionCount)
 
 module.exports = router
