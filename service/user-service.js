@@ -100,6 +100,7 @@ module.exports = {
         }
 
         const hashPassword = await bcrypt.hash(password, 3)
+        // const adminUserRole = await RoleModel.findOne({ value: 'admin' })
         const defaultUserRole = await RoleModel.findOne({ value: 'user' })
         const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone, roles: [defaultUserRole], })
 
@@ -178,6 +179,6 @@ module.exports = {
         return UserModel.findByIdAndUpdate({ _id: buyEvent._id }, { $inc: { 'subscription.count': buyEvent.numberPosters } })
     },
     subscriptionCount({ _id }) {
-        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 })
+        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 , })
     }
 }

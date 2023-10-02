@@ -52,7 +52,7 @@ module.exports = {
             let area = eventLocation.area_with_type
             let capital_marker = eventLocation.capital_marker
             let location = ''
-            // не удалять пробелы в строках
+            //! не удалять пробелы в строках
             if (region && capital_marker != 2 && region != city) {
                 location = `${region}, `
             }
@@ -65,7 +65,7 @@ module.exports = {
             if (settlement) {
                 location = `${location}, ${settlement}`
             }
-            // не удалять пробелы в строках
+            //! не удалять пробелы в строках
 
             let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
             if (!candidateEventLocationInDB && location) {
@@ -95,7 +95,7 @@ module.exports = {
         let area = eventLocation.area_with_type
         let capital_marker = eventLocation.capital_marker
         let location = ''
-        // не удалять пробелы в строках
+        //! не удалять пробелы в строках
         if (region && capital_marker != 2 && region != city) {
             location = `${region}, `
         }
@@ -108,7 +108,7 @@ module.exports = {
         if (settlement) {
             location = `${location}, ${settlement}`
         }
-        // не удалять пробелы в строках
+        //! не удалять пробелы в строках
 
         let candidateEventLocationInDB = await EventLocationModel.findOne({ name: location })
         if (!candidateEventLocationInDB) {
