@@ -218,7 +218,7 @@ module.exports = {
                     {
                         date:
                         {
-                            $gt: new Date()
+                            $gt: new Date().setHours(0, 0, 0, 0),
                         }
                     })
         }
