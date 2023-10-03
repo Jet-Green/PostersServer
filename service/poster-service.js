@@ -233,6 +233,8 @@ module.exports = {
                     { title: { $regex: searchText, $options: 'i' } },
                     { description: { $regex: searchText, $options: 'i' } },
                     { organizer: { $regex: searchText, $options: 'i' } },
+                    { eventType: { $regex: searchText, $options: 'i' } },
+                    { eventSubtype: { $regex: searchText, $options: 'i' } },
                 ]
             })
         }
