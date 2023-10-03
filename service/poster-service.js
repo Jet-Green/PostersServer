@@ -2,6 +2,7 @@ const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
+const UserService = require('../service/user-service')
 
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
@@ -20,27 +21,25 @@ module.exports = {
         return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message, rejected: true })
     },
     async moderatePoster(_id, userId) {
+        let res = await UserService.subscriptionCount({ _id: userId })
+        if (res.subscription.count) {
+            await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
+            // for log
+            let setEvent = {}
+            setEvent._id = userId
+            await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
+            await EventLogService.setPostersLog(setEvent)
 
-        //! перед тем как вычесть нужно проверить есть ли оплаченные афишы, если нет сообщить об этом на клиенте
-        // await UserModel.findByIdAndUpdate(userId, { $cond:
-        //     [{ 'subscription.count': { $gte: 0 } }, { $inc: { 'subscription.count': -1 } }, { $inc: { 'subscription.count': 0 } }] })
+            // 2592000000 - 30 дней
+            return PosterModel.findByIdAndUpdate(_id, {
+                isModerated: true, rejected: false, publicationDate: Date.now(),
+                endDate: Date.now() + 2592000000
+            })
 
-        await UserModel.findByIdAndUpdate(userId, { $inc: { 'subscription.count': -1 } })
+        } else {
+            return false
+        }
 
-
-
-
-        // for log
-        let setEvent = {}
-        setEvent._id = userId
-        await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
-        await EventLogService.setPostersLog(setEvent)
-
-        // 2592000000 - 30 дней
-        return PosterModel.findByIdAndUpdate(_id, {
-            isModerated: true, rejected: false, publicationDate: Date.now(),
-            endDate: Date.now() + 2592000000
-        })
     },
     async createDraft({ poster, userId }) {
         let { eventLocation } = poster
@@ -213,14 +212,14 @@ module.exports = {
                         }
                     })
                 break
-            default:
-                query.$and.push(
-                    {
-                        date:
-                        {
-                            $gt: new Date().setHours(0, 0, 0, 0),
-                        }
-                    })
+            // default:
+            //     query.$and.push(
+            //         {
+            //             date:
+            //             {
+            //                 $gt: new Date().setHours(0, 0, 0, 0),
+            //             }
+            //         })
         }
 
 
