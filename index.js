@@ -39,9 +39,9 @@ app.use('/auth', userRouter)
 app.use('/poster', posterRouter)
 app.use('/event-location', eventLocationRouter)
 app.use('/app-state', appStateRouter)
-app.use('/price', priceRouter )
-app.use('/event-log',eventLogRouter)
-app.use('/ord',ordRouter)
+app.use('/price', priceRouter)
+app.use('/event-log', eventLogRouter)
+app.use('/ord', ordRouter)
 
 // START SERVER
 function startServer() {
@@ -60,7 +60,6 @@ function mongoConnect() {
     )
 
     const db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function () {
         console.log('connection')
     });
