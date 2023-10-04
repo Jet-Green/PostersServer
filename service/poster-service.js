@@ -176,7 +176,7 @@ module.exports = {
                 { rejected: false, },
             ]
         }
-        if (eventType.length) {
+        if (eventType?.length) {
             query.$and.push({
                 eventType: eventType
             })
