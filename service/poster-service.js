@@ -165,7 +165,6 @@ module.exports = {
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventSubtype, eventLocation, page } = filter
-
         const limit = 20;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -177,8 +176,10 @@ module.exports = {
                 { rejected: false, },
             ]
         }
-        if (eventType) {
-            query.$and.push({ eventType: eventType })
+        if (eventType.length) {
+            query.$and.push({
+                eventType: eventType
+            })
         }
         if (eventSubtype) {
             query.$and.push({ eventSubtype: eventSubtype })
