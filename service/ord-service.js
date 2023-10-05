@@ -26,7 +26,7 @@ module.exports = {
             }
         })
         // отправка в ОРД
-        this.contract(form.form.contract)
+        // this.contract(form.form.contract)
 
     },
 
