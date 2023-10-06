@@ -19,6 +19,7 @@ const appStateRouter = require('./routers/app-state-router')
 const priceRouter = require('./routers/price-router')
 const eventLogRouter = require('./routers/event-log-router')
 const ordRouter = require('./routers/ord-router')
+const apiRouter = require('./routers/api-router')
 // const errorFilter = require('./exception/errorFilter');
 // .USE
 
@@ -26,7 +27,7 @@ app.use(history())
 
 mongoose.set('strictQuery', true);
 app.use(cors({
-    origin: [process.env.CLIENT_URL, "http://localhost:3001", "https://plpo.ru"],
+    origin: [process.env.CLIENT_URL, "http://localhost:3001", "https://plpo.ru", "http://localhost:5173"],
     credentials: true
 }))
 app.use(express.json())
@@ -46,6 +47,7 @@ app.use('/app-state', appStateRouter)
 app.use('/price', priceRouter)
 app.use('/event-log', eventLogRouter)
 app.use('/ord', ordRouter)
+app.use('/api', apiRouter)
 
 // START SERVER
 function startServer() {
