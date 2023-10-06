@@ -251,6 +251,9 @@ module.exports = {
 
 
     },
+    async find(filter) {
+        return PosterModel.find(filter)
+    },
     async getById(_id) {
         return PosterModel.findById(_id)
     },

@@ -15,6 +15,7 @@ router.post('/create-draft',authMiddleware, PosterController.createDraft)
 
 router.get('/get-posters',authMiddleware, PosterController.getPosters)
 router.post('/get-all', PosterController.getAll)
+router.post('/find', PosterController.find)
 router.post('/upload-image',authMiddleware, multer().any(), PosterController.uploadImage)
 router.get('/delete-by-id',authMiddleware, PosterController.deleteById)
 router.get('/hide-by-id',authMiddleware, PosterController.hideById)
