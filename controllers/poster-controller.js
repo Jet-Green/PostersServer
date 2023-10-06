@@ -118,5 +118,12 @@ module.exports = {
         } catch (error) {
             next(error)
         }
-    }
+    },
+    async find(req, res, next) {
+        try {
+            return res.json(await PosterService.find(req.body))
+        } catch (error) {
+            next(error)
+        }
+    },    
 }
