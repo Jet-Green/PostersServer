@@ -150,10 +150,10 @@ module.exports = {
         }
         if (posterFromDb.image) {
             let spl = posterFromDb.image.split('/')
-            let result = await s3.Remove('/plakat-city/' + spl[spl.length - 1])
+            await s3.Remove(process.env.IMG_PLACE + spl[spl.length - 1])
         }
 
-        let uploadResult = await s3.Upload(buffer, '/plakat-city/');
+        let uploadResult = await s3.Upload(buffer, process.env.IMG_PLACE);
         let filename = uploadResult.Location
         let update = await PosterModel.findByIdAndUpdate(posterId, { image: filename })
 
