@@ -1,7 +1,16 @@
 const posterModel = require("../models/poster-model")
-
+const apiService = require('../service/api-service')
 module.exports = {
     async getAll(req, res, next) {
-        res.json(await posterModel.find())
+        try {
+
+        
+            return res.json(await apiService.getAll(req.body.query))
+        } catch (error) {
+            next(error)
+        }
+    },
+    async getTypes(req, res, next) {
+         return  res.json(await apiService.getTypes())
     }
 }

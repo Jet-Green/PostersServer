@@ -27,7 +27,7 @@ app.use(history())
 
 mongoose.set('strictQuery', true);
 app.use(cors({
-    origin: [process.env.CLIENT_URL, "http://localhost:3001", "https://plpo.ru", "https://gorodaivesi.ru", "http://localhost:5173"],
+    origin: [process.env.CLIENT_URL, "https://plpo.ru", "https://gorodaivesi.ru", "http://localhost:5173"],
     credentials: true
 }))
 app.use(express.json())
