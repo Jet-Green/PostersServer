@@ -1,4 +1,5 @@
 const AppStateModel = require('../models/app-state-model');
+const UserModel = require('../models/user-model');
 
 module.exports = {
     async getAppState() {
@@ -27,5 +28,8 @@ module.exports = {
     },
     deleteEventType(eventType) {
         return AppStateModel.findOneAndUpdate({}, { $pull: { eventTypes: { name: eventType } } })
+    },
+    getUsers() {
+        return UserModel.find({}, {firstname: 1, lastname: 1, email: 1, phone: 1})
     }
 }

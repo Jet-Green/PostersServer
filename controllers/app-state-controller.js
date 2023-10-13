@@ -41,5 +41,12 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    async getUsers(req, res, next) {
+        try {
+            return res.json(await appStateService.getUsers())
+        } catch (error) {
+            next(error)
+        }
     }
 }

@@ -10,4 +10,6 @@ router.post('/add-event-subtype',authMiddleware, appStateController.addEventSubt
 router.post('/delete-event-subtype',authMiddleware, appStateController.deleteEventSubtype)
 router.post('/delete-event-type',authMiddleware, appStateController.deleteEventType)
 
+router.get('/get-users', authMiddleware, appStateController.getUsers)
+
 module.exports = router
