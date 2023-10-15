@@ -12,7 +12,7 @@ const PosterSchema = new Schema({
     email: { type: String },
 
     eventIsOn: { type: String },
-    date: { type: Number },
+    date: { type: Array  },
     workingTime: { type: String },
 
     eventType: { type: String },
