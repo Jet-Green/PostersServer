@@ -1,3 +1,4 @@
+const apiTokenModel = require("../models/api-token-model")
 const posterModel = require("../models/poster-model")
 
 module.exports = {
