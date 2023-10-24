@@ -327,14 +327,16 @@ module.exports = {
         }
         return posters
     },
-    async editPoster(poster, _id) {
+    async editPoster({ poster, hotfix }, _id) {
         let posterFromDb = await PosterModel.findById(_id)
 
         Object.assign(posterFromDb, poster)
 
-        posterFromDb.isDraft = false
-        posterFromDb.isModerated = false
-        posterFromDb.rejected = false
+        if (hotfix == 'false') {
+            posterFromDb.isDraft = false
+            posterFromDb.isModerated = false
+            posterFromDb.rejected = false
+        }
 
         return posterFromDb.save()
     }
