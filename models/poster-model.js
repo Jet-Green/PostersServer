@@ -15,8 +15,8 @@ const PosterSchema = new Schema({
     date: { type: Array  },
     workingTime: { type: String },
 
-    eventType: { type: String },
-    eventSubtype: { type: String },
+    eventType: { type: [String] },
+    eventSubtype: { type: [String] },
 
     ageLimit: { type: String },
     price: { type: String },

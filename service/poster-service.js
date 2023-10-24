@@ -178,11 +178,11 @@ module.exports = {
         }
         if (eventType?.length) {
             query.$and.push({
-                eventType: eventType
+                eventType: { $in: eventType }
             })
         }
         if (eventSubtype) {
-            query.$and.push({ eventSubtype: eventSubtype })
+            query.$and.push({ eventSubtype: { $in: eventSubtype } })
         }
         switch (date) {
             case 'Сегодня':
