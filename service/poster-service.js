@@ -181,7 +181,7 @@ module.exports = {
                 eventType: { $in: eventType }
             })
         }
-        if (eventSubtype) {
+        if (eventSubtype?.length) {
             query.$and.push({ eventSubtype: { $in: eventSubtype } })
         }
         switch (date) {
