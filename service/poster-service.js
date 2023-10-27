@@ -4,6 +4,8 @@ const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service')
 
+const logger = require('../logger.js')
+
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
 // Указываем аутентификацию в Yandex Object Storage
@@ -125,6 +127,8 @@ module.exports = {
                 posters: posterFromDb._id
             }
         })
+
+        logger.info({ _id: posterFromDb._id.toString() }, 'poster created')
 
         return posterFromDb._id.toString()
     },
