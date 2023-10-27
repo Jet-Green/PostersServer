@@ -43,7 +43,7 @@ module.exports = {
 
             const userData = await UserService.registration(email, password, firstname, lastname, phone)
             // remove access and refresh tokens
-            logger.info(userData, 'user has registered')
+            logger.info({ email: userData.user.email }, 'user has registered')
 
             // добавить флаг secure: true чтобы активировать https
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
