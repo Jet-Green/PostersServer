@@ -4,6 +4,8 @@ const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service')
 
+const logger = require('../logger.js')
+
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
 // Указываем аутентификацию в Yandex Object Storage
@@ -18,6 +20,7 @@ let s3 = new EasyYandexS3({
 
 module.exports = {
     async rejectPoster({ _id, message }) {
+        logger.info({ _id }, 'poster rejected')
         return PosterModel.findByIdAndUpdate(_id, { moderationMessage: message, rejected: true })
     },
     async moderatePoster(_id, userId) {
@@ -29,6 +32,8 @@ module.exports = {
             setEvent._id = userId
             await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
             await EventLogService.setPostersLog(setEvent)
+
+            logger.info({ _id, userId }, 'poster moderated and published')
 
             // 2592000000 - 30 дней
             return PosterModel.findByIdAndUpdate(_id, {
@@ -126,6 +131,8 @@ module.exports = {
             }
         })
 
+        logger.info({ _id: posterFromDb._id.toString() }, 'poster created')
+
         return posterFromDb._id.toString()
     },
     async updatePoster(poster) {
@@ -136,6 +143,9 @@ module.exports = {
         poster.rejected = false
 
         let posterFromDb = await PosterModel.findOneAndUpdate({ _id }, poster, { new: true })
+
+        logger.info({ _id }, 'poster updated')
+
         return posterFromDb._id
     },
     async updateImageUrl(req) {
@@ -336,6 +346,7 @@ module.exports = {
             posterFromDb.isDraft = false
             posterFromDb.isModerated = false
             posterFromDb.rejected = false
+            logger.info({ _id }, 'poster edited by user')
         }
 
         return posterFromDb.save()

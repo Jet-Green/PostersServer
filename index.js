@@ -20,9 +20,9 @@ const priceRouter = require('./routers/price-router')
 const eventLogRouter = require('./routers/event-log-router')
 const ordRouter = require('./routers/ord-router')
 const apiRouter = require('./routers/api-router')
-// const errorFilter = require('./exception/errorFilter');
-// .USE
+const errorFilter = require('./exception/errorFilter');
 
+// .USE
 app.use(history())
 
 mongoose.set('strictQuery', true);
@@ -37,7 +37,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static('dist'))
 
-// app.use(errorFilter)
 
 // ROUTES
 app.use('/auth', userRouter)
@@ -48,6 +47,8 @@ app.use('/price', priceRouter)
 app.use('/event-log', eventLogRouter)
 app.use('/ord', ordRouter)
 app.use('/api', apiRouter)
+
+app.use(errorFilter)
 
 // START SERVER
 function startServer() {

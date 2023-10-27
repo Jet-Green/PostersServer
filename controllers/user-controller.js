@@ -1,4 +1,5 @@
 const UserService = require('../service/user-service')
+const logger = require('../logger');
 
 module.exports = {
     async resetPassword(req, res, next) {
@@ -39,8 +40,10 @@ module.exports = {
     async registration(req, res, next) {
         try {
             const { email, password, firstname, lastname, phone } = req.body;
-         
+
             const userData = await UserService.registration(email, password, firstname, lastname, phone)
+            // remove access and refresh tokens
+            logger.info({ email: userData.user.email }, 'user has registered')
 
             // добавить флаг secure: true чтобы активировать https
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
