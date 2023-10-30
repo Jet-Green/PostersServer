@@ -221,7 +221,7 @@ module.exports = {
                         date:
                         {
                             $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
-                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 14
+                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 30
                         }
                     })
                 break
