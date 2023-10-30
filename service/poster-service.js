@@ -2,7 +2,8 @@ const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
-const UserService = require('../service/user-service')
+const UserService = require('../service/user-service');
+const telegramService = require('./telegram-service.js');
 
 const logger = require('../logger.js')
 
@@ -34,13 +35,14 @@ module.exports = {
             await EventLogService.setPostersLog(setEvent)
 
             logger.info({ _id, userId }, 'poster moderated and published')
+            
+            telegramService.sendPost(await PosterModel.findById(_id))
 
             // 2592000000 - 30 дней
             return PosterModel.findByIdAndUpdate(_id, {
                 isModerated: true, rejected: false, publicationDate: Date.now(),
                 endDate: Date.now() + 2592000000
-            })
-
+            }, { new: true })                
         } else {
             return false
         }
