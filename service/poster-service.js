@@ -36,7 +36,8 @@ module.exports = {
 
             logger.info({ _id, userId }, 'poster moderated and published')
             
-            telegramService.sendPost(await PosterModel.findById(_id))
+            // вызывает конфиликт с ботом в продакшене
+            // telegramService.sendPost(await PosterModel.findById(_id))
 
             // 2592000000 - 30 дней
             return PosterModel.findByIdAndUpdate(_id, {
