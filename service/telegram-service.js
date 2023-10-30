@@ -13,7 +13,7 @@ module.exports = {
                 chat_id, 
                 poster.image, 
                 { 
-                    caption: `<a href="${process.env.CLIENT_URL + '/post?_id=' + poster._id}">${poster.title}</a>`, parse_mode: 'HTML' 
+                    caption: `<a href="${process.env.CLIENT_URL + '/post?_id=' + poster._id}">${poster.eventType.join(' | ')}   "${poster.title}" </a>`, parse_mode: 'HTML' 
                 }
             )
         } catch(error) {
