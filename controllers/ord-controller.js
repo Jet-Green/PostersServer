@@ -1,21 +1,16 @@
 const OrdService = require('../service/ord-service')
 
 module.exports = {
-
-    async getOrganisation(req, res, next) {
+    async getOrganization(req, res, next) {
         try {
             return res.json(await OrdService.getOrdState())
         } catch (error) {
             next(error)
         }
     },
-
-
-    async createOrganisation(req, res, next) {
+    async createOrganization(req, res, next) {
         try {
-
-            return res.json(await OrdService.createOrganisation(req.body))
-
+            return res.json(await OrdService.createOrganization(req.body))
         } catch (error) {
             next(error)
         }
@@ -27,12 +22,4 @@ module.exports = {
             next(error)
         }
     },
-
-
-
-
-
-
 }
-
-

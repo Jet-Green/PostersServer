@@ -9,12 +9,11 @@ module.exports = {
     async getOrdState() {
         let allStates = await OrdModel.find({})
         if (allStates.length == 0) {
-            return await OrdModel.create({ organisation: {} })
+            return await OrdModel.create({ organization: {} })
         }
         return allStates[0]
     },
-    async createOrganisation(form) {
-
+    async createOrganization(form) {
         let res = await OrdModel.findOneAndUpdate({}, { organization: form })
         await this.organization(form)
         return res
@@ -26,8 +25,20 @@ module.exports = {
             }
         })
         // отправка в ОРД
-        // this.contract(form.form.contract)
+        this.contract(form.form.contract)
 
+    },
+    async creative() {
+        axios({
+            method: 'post',
+            url: `${YA_ORD_URL}creative`,
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${YA_ORD_OAuth}`
+            },
+            data: form
+        });
     },
 
     // ОРД Яндекс методы
