@@ -35,7 +35,7 @@ module.exports = {
             await EventLogService.setPostersLog(setEvent)
 
             logger.info({ _id, userId }, 'poster moderated and published')
-            
+
             // вызывает конфиликт с ботом в продакшене
             // telegramService.sendPost(await PosterModel.findById(_id))
 
@@ -43,7 +43,7 @@ module.exports = {
             return PosterModel.findByIdAndUpdate(_id, {
                 isModerated: true, rejected: false, publicationDate: Date.now(),
                 endDate: Date.now() + 2592000000
-            }, { new: true })                
+            }, { new: true })
         } else {
             return false
         }
@@ -202,8 +202,10 @@ module.exports = {
                 query.$and.push({
                     date:
                     {
-                        $gt: new Date().setHours(0, 0, 0, 0),
-                        $lt: new Date().setHours(23, 59, 59, 999)
+                        $elemMatch: {
+                            $gt: new Date().setHours(0, 0, 0, 0),
+                            $lt: new Date().setHours(23, 59, 59, 999)
+                        }
                     }
                 })
                 break
@@ -211,8 +213,10 @@ module.exports = {
                 query.$and.push({
                     date:
                     {
-                        $gt: new Date().setHours(0, 0, 0, 0),
-                        $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 7
+                        $elemMatch: {
+                            $gt: new Date().setHours(0, 0, 0, 0),
+                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 7
+                        }
                     }
                 })
                 break
@@ -221,8 +225,10 @@ module.exports = {
                     {
                         date:
                         {
-                            $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
-                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 30
+                            $elemMatch: {
+                                $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
+                                $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 30
+                            }
                         }
                     })
                 break
