@@ -1,5 +1,6 @@
 const { sendMail } = require('../middleware/mailer')
 const PosterService = require('../service/poster-service')
+const vkapi = require('../middleware/vk-api')
 
 module.exports = {
     async rejectPoster(req, res, next) {
@@ -52,6 +53,10 @@ module.exports = {
                 ${JSON.stringify(req.body)}
                 </body>
             </html>`, emails = ['grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
+
+            // await vkapi.postInGroup(
+            //     `${process.env.CLIENT_URL}/post?_id=${posterId}`
+            // )
 
             return res.json({ _id: posterId, message: 'Создано' })
         } catch (error) {
@@ -137,5 +142,5 @@ module.exports = {
         } catch (error) {
             next(error)
         }
-    },    
+    },
 }
