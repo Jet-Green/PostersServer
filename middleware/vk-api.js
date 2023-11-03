@@ -3,6 +3,7 @@ const axios = require('axios')
 module.exports = {
     async postInGroup(message) {
         let response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&message=${message}&owner_id=-222755810&from_group=1`)
+        console.log(response)
         return response
     }
 } 
