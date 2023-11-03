@@ -8,8 +8,9 @@ let bot;
 if (process.env.NODE_ENV == 'production') {
     bot = new TelegramBot(token, { polling: true })
 }
+
 // экспортирую объект с пустыми функциями, если если мод development
-let toExport = process.env.NODE_ENV == 'production' ? {
+module.exports = process.env.NODE_ENV == 'production' ? {
     async sendPost(poster) {
         try {
             await bot.sendPhoto(
@@ -24,5 +25,3 @@ let toExport = process.env.NODE_ENV == 'production' ? {
         }
     }
 } : { async sendPost(poster) { return } }
-
-module.exports = toExport
