@@ -54,9 +54,9 @@ module.exports = {
                 </body>
             </html>`, emails = ['grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
 
-            // await vkapi.postInGroup(
-            //     `${process.env.CLIENT_URL}/post?_id=${posterId}`
-            // )
+            await vkapi.postInGroup(
+                `${process.env.CLIENT_URL}/post?_id=${posterId}`
+            )
 
             return res.json({ _id: posterId, message: 'Создано' })
         } catch (error) {
