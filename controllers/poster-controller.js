@@ -12,6 +12,9 @@ module.exports = {
     },
     async moderatePoster(req, res, next) {
         try {
+            await vkapi.postInGroup(
+                `${process.env.CLIENT_URL}/post?_id=${req.query._id}`
+            )
             return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
         } catch (error) {
             next(error)
@@ -53,10 +56,6 @@ module.exports = {
                 ${JSON.stringify(req.body)}
                 </body>
             </html>`, emails = ['grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
-
-            await vkapi.postInGroup(
-                `${process.env.CLIENT_URL}/post?_id=${posterId}`
-            )
 
             return res.json({ _id: posterId, message: 'Создано' })
         } catch (error) {
