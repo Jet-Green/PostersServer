@@ -13,7 +13,6 @@ if (process.env.NODE_ENV == 'production') {
 module.exports = process.env.NODE_ENV == 'production' ? {
     async sendPost(poster) {
         try {
-            console.log(process.env.CLIENT_URL + '/post?_id=' + poster._id)
             await bot.sendPhoto(
                 chat_id,
                 poster.image,
