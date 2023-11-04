@@ -2,7 +2,7 @@ const axios = require('axios')
 
 module.exports = {
     async postInGroup(message) {
-        let response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&message=${message}&attachments=https://goroda-img.storage.yandexcloud.net/plakat-city/6544f6d4362313ac865b8b33.jpg&owner_id=-222755810&from_group=1`)
+        let response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&message=${message}&attachments=https://plpo.ru/post?_id=6543ec70dca02c727b54d5eb&owner_id=-222755810&from_group=1`)
         return response
     }
 } 
