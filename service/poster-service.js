@@ -5,6 +5,7 @@ const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
 
+
 const logger = require('../logger.js')
 
 let EasyYandexS3 = require('easy-yandex-s3').default;
@@ -33,9 +34,9 @@ module.exports = {
             setEvent._id = userId
             await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
             await EventLogService.setPostersLog(setEvent)
-
+            
             logger.info({ _id, userId }, 'poster moderated and published')
-
+         
             // вызывает конфиликт с ботом в продакшене
             telegramService.sendPost(await PosterModel.findById(_id))
 

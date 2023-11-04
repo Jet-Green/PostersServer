@@ -13,7 +13,8 @@ module.exports = {
     async moderatePoster(req, res, next) {
         try {
             await vkapi.postInGroup(
-                `${process.env.CLIENT_URL}/post?_id=${req.query._id}`
+                `${process.env.CLIENT_URL}/post?_id=${req.query._id}`,
+
             )
             return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
         } catch (error) {
