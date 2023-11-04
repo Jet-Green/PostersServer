@@ -4,7 +4,7 @@ const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
-const vkapi = require('../middleware/vk-api')
+
 
 const logger = require('../logger.js')
 
@@ -36,10 +36,7 @@ module.exports = {
             await EventLogService.setPostersLog(setEvent)
             
             logger.info({ _id, userId }, 'poster moderated and published')
-            await vkapi.postInGroup(
-                `${process.env.CLIENT_URL}/post?_id=${req.query._id}`,
-                
-            )
+         
             // вызывает конфиликт с ботом в продакшене
             telegramService.sendPost(await PosterModel.findById(_id))
 
