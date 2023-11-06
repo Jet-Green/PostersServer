@@ -1,5 +1,6 @@
 const { sendMail } = require('../middleware/mailer')
 const PosterService = require('../service/poster-service')
+const OrdService = require('../service/ord-service')
 const vkapi = require('../middleware/vk-api')
 
 module.exports = {
@@ -45,7 +46,8 @@ module.exports = {
     },
     async create(req, res, next) {
         try {
-            const posterId = await PosterService.createPoster(req.body)
+            const posterFromDb = await PosterService.createPoster(req.body)
+            const posterId = posterFromDb._id
 
             // mailing
             await sendMail(`
@@ -73,7 +75,11 @@ module.exports = {
     },
     async uploadImage(req, res, next) {
         try {
-            return res.json(await PosterService.updateImageUrl(req))
+            let { filename, posterFromDb } = await PosterService.updateImageUrl(req)
+
+            let creative = await OrdService.creative(posterFromDb, filename)
+
+            return res.json(filename)
         } catch (error) {
             next(error)
         }

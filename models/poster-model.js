@@ -2,6 +2,9 @@ const { Schema, model } = require('mongoose');
 
 const PosterSchema = new Schema({
     creator: { type: Schema.Types.ObjectId, ref: 'User' },
+    contract: { type: String },
+    erir_id: { type: String },
+
     title: { type: String },
     description: { type: String },
     image: { type: String },
@@ -12,7 +15,7 @@ const PosterSchema = new Schema({
     email: { type: String },
 
     eventIsOn: { type: String },
-    date: { type: Array  },
+    date: { type: Array },
     workingTime: { type: String },
 
     eventType: { type: [String] },
@@ -32,7 +35,7 @@ const PosterSchema = new Schema({
 
     createdDate: Number,
 
-    isDraft: { type: Boolean, default: false }
+    isDraft: { type: Boolean, default: false },
 })
 
 module.exports = model('Poster', PosterSchema);

@@ -34,9 +34,9 @@ module.exports = {
             setEvent._id = userId
             await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
             await EventLogService.setPostersLog(setEvent)
-            
+
             logger.info({ _id, userId }, 'poster moderated and published')
-         
+
             // вызывает конфиликт с ботом в продакшене
             telegramService.sendPost(await PosterModel.findById(_id))
 
@@ -137,7 +137,7 @@ module.exports = {
 
         logger.info({ _id: posterFromDb._id.toString() }, 'poster created')
 
-        return posterFromDb._id.toString()
+        return posterFromDb
     },
     async updatePoster(poster) {
         let _id = poster._id
@@ -175,7 +175,7 @@ module.exports = {
             await PosterModel.findByIdAndUpdate(posterId, { $set: { image: filename } })
         }
 
-        return filename
+        return { filename, posterFromDb }
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventSubtype, eventLocation, page } = filter

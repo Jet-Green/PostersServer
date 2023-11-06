@@ -1,5 +1,6 @@
 const OrdModel = require('../models/ord-model.js')
 const UserModel = require('../models/user-model.js')
+const PosterModel = require('../models/poster-model.js')
 const axios = require('axios');
 
 const YA_ORD_OAuth = process.env.YA_ORD_OAuth
@@ -28,19 +29,6 @@ module.exports = {
         this.contract(form.form.contract)
 
     },
-    async creative() {
-        axios({
-            method: 'post',
-            url: `${YA_ORD_URL}creative`,
-            headers: {
-                'accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${YA_ORD_OAuth}`
-            },
-            data: form
-        });
-    },
-
     // ОРД Яндекс методы
     async organization(form) {
         axios({
@@ -59,7 +47,7 @@ module.exports = {
 
     },
     async contract(form) {
-        axios({
+        let res = await axios({
             method: 'post',
             url: `${YA_ORD_URL}contract`,
             headers: {
@@ -71,6 +59,56 @@ module.exports = {
 
         });
     },
+    async creative(posterFromDb, posterImage) {
+        let creatorFromDb = await UserModel.findById(posterFromDb.creator, { contracts: 1 })
 
+        let contract;
+        for (let c of creatorFromDb.contracts) {
+            if (c.name == posterFromDb.contract) {
+                contract = c
+            }
+        }
+
+        if (!contract) contract = creatorFromDb.contracts[0]
+
+        let toSend = {
+            "id": posterFromDb._id,
+            "contractId": contract.contract.id,
+            "description": posterFromDb.description,
+            "type": "other",
+            "form": "video",
+            "urls": [
+                "https://plpo.ru",
+            ],
+            "okveds": [
+                contract.okved
+            ],
+            "mediaData": [
+                {
+                    "mediaUrl": posterImage,
+                    "description": "Афиша мероприятия"
+                }
+            ],
+            "fiasRegionList": [],
+            "isSocial": false,
+            "isNative": false
+        }
+
+        let res = await axios({
+            method: 'post',
+            url: `${YA_ORD_URL}creative`,
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${YA_ORD_OAuth}`
+            },
+            data: toSend
+        });
+
+        if (res.status == 200) {
+            let { erir_id } = res.data
+            return await PosterModel.findByIdAndUpdate(posterFromDb._id, { $set: { erir_id: erir_id } })
+        }
+    },
 }
 
