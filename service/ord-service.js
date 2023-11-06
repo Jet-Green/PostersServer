@@ -76,7 +76,7 @@ module.exports = {
 
         });
     },
-    async creative(posterFromDb, posterImage) {
+    async creative(posterFromDb, posterImage, urls) {
         let creatorFromDb = await UserModel.findById(posterFromDb.creator, { contracts: 1 })
 
         let contract;
@@ -94,9 +94,7 @@ module.exports = {
             "description": posterFromDb.description,
             "type": "other",
             "form": "video",
-            "urls": [
-                "https://plpo.ru",
-            ],
+            "urls": urls,
             "okveds": [
                 contract.okved
             ],
@@ -123,8 +121,8 @@ module.exports = {
         });
 
         if (res.status == 200) {
-            let { erir_id } = res.data
-            return await PosterModel.findByIdAndUpdate(posterFromDb._id, { $set: { erir_id: erir_id } })
+            let { erir_ids } = res.data
+            return await PosterModel.findByIdAndUpdate(posterFromDb._id, { $set: { erir_ids: erir_ids } })
         }
     },
 }

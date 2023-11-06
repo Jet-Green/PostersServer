@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const PosterSchema = new Schema({
     creator: { type: Schema.Types.ObjectId, ref: 'User' },
     contract: { type: String },
-    erir_id: { type: String },
+    erir_ids: { type: Array },
 
     title: { type: String },
     description: { type: String },

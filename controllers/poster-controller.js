@@ -77,7 +77,7 @@ module.exports = {
         try {
             let { filename, posterFromDb } = await PosterService.updateImageUrl(req)
 
-            let creative = await OrdService.creative(posterFromDb, filename)
+            let creative = await OrdService.creative(posterFromDb, filename, req.query.urls.split(','))
 
             return res.json(filename)
         } catch (error) {
