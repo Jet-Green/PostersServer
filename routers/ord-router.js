@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth-middleware')
 const router = Router()
 
 //routes
-router.get('/get-organisation', ordController.getOrganization)
+router.get('/get-organization', ordController.getOrganization)
 router.post('/create-organization', authMiddleware, ordController.createOrganization)
 router.post('/create-contract', authMiddleware, ordController.createContract)
 
