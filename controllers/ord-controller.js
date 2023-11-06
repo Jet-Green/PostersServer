@@ -22,4 +22,16 @@ module.exports = {
             next(error)
         }
     },
+    async createPlatform(req, res, next) {
+        try {
+            let platformFromDb = await OrdService.createPlatform(req.body)
+            let platformId = platformFromDb._id
+
+            req.body.platforms[0].platformId = platformId
+
+            return res.json(await OrdService.platforms(req.body))
+        } catch (error) {
+            next(error)
+        }
+    }
 }

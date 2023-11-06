@@ -1,5 +1,7 @@
 const OrdModel = require('../models/ord-model.js')
 const UserModel = require('../models/user-model.js')
+const PlatformModel = require('../models/platform-model.js')
+
 const PosterModel = require('../models/poster-model.js')
 const axios = require('axios');
 
@@ -29,6 +31,9 @@ module.exports = {
         this.contract(form.form.contract)
 
     },
+    async createPlatform({ platforms }) {
+        return PlatformModel.create(platforms[0])
+    },
     // ОРД Яндекс методы
     async organization(form) {
         axios({
@@ -43,8 +48,20 @@ module.exports = {
 
         });
     },
-    async platforms(form) {
-
+    async platforms(toSend) {
+        let res = await axios({
+            method: 'post',
+            url: `${YA_ORD_URL}platforms`,
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${YA_ORD_OAuth}`
+            },
+            data: toSend
+        });
+        if (res.status == 200) {
+            return await OrdModel.findOneAndUpdate({}, { $push: { 'organization.platforms': toSend.platforms[0] } })
+        }
     },
     async contract(form) {
         let res = await axios({

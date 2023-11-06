@@ -9,5 +9,6 @@ const router = Router()
 router.get('/get-organization', ordController.getOrganization)
 router.post('/create-organization', authMiddleware, ordController.createOrganization)
 router.post('/create-contract', authMiddleware, ordController.createContract)
+router.post('/create-platform', authMiddleware, ordController.createPlatform)
 
 module.exports = router
