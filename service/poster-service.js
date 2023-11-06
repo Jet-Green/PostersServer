@@ -201,31 +201,33 @@ module.exports = {
         switch (date) {
             case 'Сегодня':
                 query.$and.push({
-                    date:
-                    {
-                        $gt: new Date().setHours(0, 0, 0, 0),
-                        $lt: new Date().setHours(23, 59, 59, 999)
+                    date: {
+                        $elemMatch: {
+                            $gt: new Date().setHours(0, 0, 0, 0),
+                            $lt: new Date().setHours(23, 59, 59, 999)
+                        }
                     }
                 })
                 break
             case 'На неделе':
                 query.$and.push({
-                    date:
-                    {
-                        $gt: new Date().setHours(0, 0, 0, 0),
-                        $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 7
+                    date: {
+                        $elemMatch: {
+                            $gt: new Date().setHours(0, 0, 0, 0),
+                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 7
+                        }
                     }
                 })
                 break
             case 'Скоро':
-                query.$and.push(
-                    {
-                        date:
-                        {
+                query.$and.push({
+                    date: {
+                        $elemMatch: {
                             $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
                             $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 30
                         }
-                    })
+                    }
+                })
                 break
             // default:
             //     query.$and.push(
