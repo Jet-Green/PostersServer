@@ -2,7 +2,9 @@ const PosterModel = require('../models/poster-model.js')
 const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
-const UserService = require('../service/user-service')
+const UserService = require('../service/user-service');
+const telegramService = require('./telegram-service.js');
+
 
 const logger = require('../logger.js')
 
@@ -32,15 +34,17 @@ module.exports = {
             setEvent._id = userId
             await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
             await EventLogService.setPostersLog(setEvent)
-
+            
             logger.info({ _id, userId }, 'poster moderated and published')
+         
+            // вызывает конфиликт с ботом в продакшене
+            telegramService.sendPost(await PosterModel.findById(_id))
 
             // 2592000000 - 30 дней
             return PosterModel.findByIdAndUpdate(_id, {
                 isModerated: true, rejected: false, publicationDate: Date.now(),
                 endDate: Date.now() + 2592000000
-            })
-
+            }, { new: true })
         } else {
             return false
         }
@@ -219,7 +223,7 @@ module.exports = {
                         date:
                         {
                             $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
-                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 14
+                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 30
                         }
                     })
                 break
