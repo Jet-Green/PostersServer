@@ -14,7 +14,7 @@ module.exports = {
         }
         if (eventType?.length) {
             query.$and.push({
-                eventType: eventType
+                eventType: { $in: eventType }
             })
         }
         if (eventLocation != "") {
