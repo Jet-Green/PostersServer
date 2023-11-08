@@ -34,9 +34,9 @@ module.exports = {
             setEvent._id = userId
             await PosterModel.find({ _id: _id }).then((data) => { setEvent.name = data[0].title })
             await EventLogService.setPostersLog(setEvent)
-            
+
             logger.info({ _id, userId }, 'poster moderated and published')
-         
+
             // вызывает конфиликт с ботом в продакшене
             telegramService.sendPost(await PosterModel.findById(_id))
 
@@ -229,14 +229,16 @@ module.exports = {
                     }
                 })
                 break
-            // default:
-            //     query.$and.push(
-            //         {
-            //             date:
-            //             {
-            //                 $gt: new Date().setHours(0, 0, 0, 0),
-            //             }
-            //         })
+
+
+            default:
+                query.$and.push(
+                    {
+                        $or: [
+                            { date: { $eq: [], } },
+                            { date: { $gt: new Date().setHours(0, 0, 0, 0), } }
+                        ]
+                    })
         }
 
 
