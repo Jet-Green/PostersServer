@@ -3,7 +3,7 @@ const posterModel = require("../models/poster-model")
 
 module.exports = {
     async getAll(filter) {
-        let {  eventType, eventLocation } = filter
+        let { eventType, eventLocation } = filter
         let query = {
             $and: [
                 { isHidden: false },
@@ -20,7 +20,13 @@ module.exports = {
         if (eventLocation != "") {
             query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
-       
+        query.$and.push(
+            {
+                $or: [
+                    { date: { $eq: [], } },
+                    { date: { $gt: new Date().setHours(0, 0, 0, 0), } }
+                ]
+            })
 
         return await posterModel.find(query, null).sort({ publicationDate: -1, date: -1 })
     },
