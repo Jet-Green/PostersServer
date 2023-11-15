@@ -179,7 +179,7 @@ module.exports = {
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventSubtype, eventLocation, page } = filter
-        const limit = 20;
+        const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
         let query = {
