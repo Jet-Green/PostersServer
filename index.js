@@ -8,6 +8,7 @@ const app = express()
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser');
+const vkApi = require('./middleware/vk-api')
 
 const history = require('connect-history-api-fallback');
 

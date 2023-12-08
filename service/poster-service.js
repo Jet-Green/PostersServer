@@ -5,6 +5,7 @@ const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
 
+
 const logger = require('../logger.js')
 
 let EasyYandexS3 = require('easy-yandex-s3').default;
@@ -37,7 +38,7 @@ module.exports = {
             logger.info({ _id, userId }, 'poster moderated and published')
 
             // вызывает конфиликт с ботом в продакшене
-            // telegramService.sendPost(await PosterModel.findById(_id))
+            telegramService.sendPost(await PosterModel.findById(_id))
 
             // 2592000000 - 30 дней
             return PosterModel.findByIdAndUpdate(_id, {
@@ -178,7 +179,7 @@ module.exports = {
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventSubtype, eventLocation, page } = filter
-        const limit = 20;
+        const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
         let query = {
@@ -200,8 +201,7 @@ module.exports = {
         switch (date) {
             case 'Сегодня':
                 query.$and.push({
-                    date:
-                    {
+                    date: {
                         $elemMatch: {
                             $gt: new Date().setHours(0, 0, 0, 0),
                             $lt: new Date().setHours(23, 59, 59, 999)
@@ -211,8 +211,7 @@ module.exports = {
                 break
             case 'На неделе':
                 query.$and.push({
-                    date:
-                    {
+                    date: {
                         $elemMatch: {
                             $gt: new Date().setHours(0, 0, 0, 0),
                             $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 7
@@ -221,25 +220,25 @@ module.exports = {
                 })
                 break
             case 'Скоро':
+                query.$and.push({
+                    date: {
+                        $elemMatch: {
+                            $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
+                            $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 30
+                        }
+                    }
+                })
+                break
+
+
+            default:
                 query.$and.push(
                     {
-                        date:
-                        {
-                            $elemMatch: {
-                                $gt: new Date().setHours(0, 0, 0, 0) + 1000 * 60 * 60 * 24 * 8,
-                                $lt: new Date().setHours(23, 59, 59, 999) + 1000 * 60 * 60 * 24 * 30
-                            }
-                        }
+                        $or: [
+                            { date: { $eq: [], } },
+                            { date: { $gt: new Date().setHours(0, 0, 0, 0), } }
+                        ]
                     })
-                break
-            // default:
-            //     query.$and.push(
-            //         {
-            //             date:
-            //             {
-            //                 $gt: new Date().setHours(0, 0, 0, 0),
-            //             }
-            //         })
         }
 
 
