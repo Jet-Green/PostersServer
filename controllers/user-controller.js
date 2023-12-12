@@ -70,6 +70,7 @@ module.exports = {
 
             const userData = await UserService.refresh(refreshToken)
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+            res.cookie('accessToken', userData.accessToken, { maxAge: 60 * 60 * 1000, httpOnly: true });
             // const newUser = await UserService.update(userData)
 
             return res.json(userData);
