@@ -24,7 +24,7 @@ const apiRouter = require('./routers/api-router')
 const errorFilter = require('./exception/errorFilter');
 
 // .USE
-app.use(history())
+// app.use(history())
 
 mongoose.set('strictQuery', true);
 app.use(cors({
@@ -36,7 +36,7 @@ app.use(cookieParser())
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(express.static('dist'))
+// app.use(express.static('dist'))
 
 
 // ROUTES
