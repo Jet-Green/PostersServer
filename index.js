@@ -24,11 +24,11 @@ const apiRouter = require('./routers/api-router')
 const errorFilter = require('./exception/errorFilter');
 
 // .USE
-app.use(history())
+// app.use(history())
 
 mongoose.set('strictQuery', true);
 app.use(cors({
-    origin: [process.env.CLIENT_URL, "https://plpo.ru", "https://gorodaivesi.ru", "http://localhost:5173"],
+    origin: [process.env.CLIENT_URL, "https://plpo.ru", "https://gorodaivesi.ru", "http://localhost:3030"],
     credentials: true
 }))
 app.use(express.json())
@@ -36,7 +36,7 @@ app.use(cookieParser())
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(express.static('dist'))
+// app.use(express.static('dist'))
 
 
 // ROUTES
