@@ -13,7 +13,7 @@ module.exports = {
         }
         return allStates[0]
     },
-    async createOrganisation(form) {
+    async createOrganization(form) {
 
         let res = await OrdModel.findOneAndUpdate({}, { organization: form })
         await this.organization(form)
