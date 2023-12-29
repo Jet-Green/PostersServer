@@ -372,7 +372,7 @@ module.exports = {
                 { isModerated: true },
                 { isDraft: false },
                 { rejected: false, },
-                { endDate: { $lt: Date.now() } },
+                { endDate: { $gt: Date.now() } },
 
             ]
         })).map(item => item.eventType).flat())]
