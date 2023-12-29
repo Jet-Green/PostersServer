@@ -143,4 +143,11 @@ module.exports = {
             next(error)
         }
     },
+    async getActiveCategories(req, res, next) {
+        try {
+            return res.json(await PosterService.getActiveCategories())
+        } catch (error) {
+            next(error)
+        }
+    },
 }
