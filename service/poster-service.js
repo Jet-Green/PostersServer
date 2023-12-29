@@ -233,15 +233,9 @@ module.exports = {
 
             default:
                 query.$and.push(
-                    {
-                        $or: [
-                            { date: { $eq: [], } },
-                            { date: { $gt: new Date().setHours(0, 0, 0, 0), } }
-                        ]
-                    })
+                    { endDate: { $gte: Date.now() } },
+                )
         }
-
-
 
         if (eventLocation != "") {
             query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
@@ -319,7 +313,14 @@ module.exports = {
         switch (poster_status) {
             case 'active':
                 posters = await PosterModel
-                    .find({ $and: [{ _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, }] })
+                    .find(
+                        {
+                            $and: [
+                                { _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, },
+                                { endDate: { $gt: Date.now() } },
+                            ]
+                        },
+                    )
                     .sort({ publicationDate: -1 })
                 break
             case 'onModeration':
@@ -329,7 +330,12 @@ module.exports = {
                 break
             case 'archive':
                 posters = await PosterModel
-                    .find({ $and: [{ _id: { $in: userFromDb.posters }, endDate: { $lt: Date.now() }, isModerated: true, isDraft: false, rejected: false, }] })
+                    .find({
+                        $and: [
+                            { _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, },
+                            { endDate: { $lte: Date.now() } },
+                        ]
+                    })
                     .sort({ publicationDate: -1 })
                 break
             case 'draft':
@@ -366,6 +372,8 @@ module.exports = {
                 { isModerated: true },
                 { isDraft: false },
                 { rejected: false, },
+                { endDate: { $lt: Date.now() } },
+
             ]
         })).map(item => item.eventType).flat())]
     }
