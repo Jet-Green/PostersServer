@@ -360,6 +360,13 @@ module.exports = {
         return posterFromDb.save()
     },
     async getActiveCategories() {
-        return [...new Set((await PosterModel.find({ $and: [{ isModerated: true, isDraft: false, rejected: false }] })).map(item => item.eventType).flat())]
+        return [...new Set((await PosterModel.find({
+            $and: [
+                { isHidden: false },
+                { isModerated: true },
+                { isDraft: false },
+                { rejected: false, },
+            ]
+        })).map(item => item.eventType).flat())]
     }
 }
