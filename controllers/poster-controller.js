@@ -46,8 +46,9 @@ module.exports = {
     async create(req, res, next) {
         try {
             const posterId = await PosterService.createPoster(req.body)
-            // mailing
-            await sendMail(`
+            if (process.env.NODE_ENV == 'production') {
+                // mailing
+                await sendMail(`
                     <!DOCTYPE html>
                     <html lang="ru">
                     <head>
@@ -56,6 +57,7 @@ module.exports = {
                     ${JSON.stringify(req.body)}
                     </body>
                     </html>`, emails = ['grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
+            }
 
             return res.json({ _id: posterId, message: 'Создано' })
         } catch (error) {
