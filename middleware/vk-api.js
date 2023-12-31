@@ -1,8 +1,8 @@
 const axios = require('axios')
 
 module.exports = process.env.NODE_ENV == 'production' ? {
-    async postInGroup(message) {
-        let response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&attachments=${message}&message=${message}&owner_id=-222755810&from_group=1`)
+    async postInGroup(message, postTitle) {
+        let response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&attachments=${message}&message=${postTitle}&owner_id=-222755810&from_group=1`)
         return response
     }
 } : { async postInGroup(message) { } }
