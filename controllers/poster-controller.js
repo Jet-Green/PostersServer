@@ -13,8 +13,7 @@ module.exports = {
     async moderatePoster(req, res, next) {
         try {
             if (process.env.NODE_ENV == 'production') {
-                let postTitle = `${req.query.eventType.join('|')} ${req.query.eventType.title}`
-                vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, postTitle)
+                vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`)
             }
 
             return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
