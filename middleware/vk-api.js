@@ -11,7 +11,7 @@ const upload = new Upload({
     api
 });
 
-module.exports = {
+module.exports = process.env.NODE_ENV == 'production' ?{
     async postInGroup(message, poster) {
  
         const image = await upload.wallPhoto({
@@ -31,7 +31,7 @@ module.exports = {
     
         // return response
     }
-} 
+} : { async postInGroup(message) { } }
 
 // `https://oauth.vk.com/authorize?client_id=-51783056&scope=manage&redirect_uri=http://localhost:3031&response_type=token`
 // https://oauth.vk.com/access_token?client_id=51783056&client_secret=Hn2RIxtq3uzc3Vl0KAgI&redirect_uri=http://localhost:3031&code=0a6421a65a4a8219e6

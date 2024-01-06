@@ -188,6 +188,7 @@ module.exports = {
                 { isModerated: true },
                 { isDraft: false },
                 { rejected: false, },
+                { endDate: { $gte: new Date().setHours(0, 0, 0, 0), } }
             ]
         }
         if (eventType?.length) {
@@ -232,9 +233,16 @@ module.exports = {
 
 
             default:
-                query.$and.push(
-                    { endDate: { $gte: Date.now() } },
-                )
+                query.$and.push({
+                    $or: [
+                        { date: { $eq: [] } },
+                        {
+                            date: {
+                                $gt: new Date().setHours(0, 0, 0, 0),
+                            }
+                        }
+                    ]
+                })
         }
 
         if (eventLocation != "") {
@@ -318,6 +326,16 @@ module.exports = {
                             $and: [
                                 { _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, },
                                 { endDate: { $gt: Date.now() } },
+                                {
+                                    $or: [
+                                        { date: { $eq: [] } },
+                                        {
+                                            date: {
+                                                $gt: new Date().setHours(0, 0, 0, 0),
+                                            }
+                                        }
+                                    ]
+                                }
                             ]
                         },
                     )
@@ -333,7 +351,18 @@ module.exports = {
                     .find({
                         $and: [
                             { _id: { $in: userFromDb.posters }, isModerated: true, isDraft: false, rejected: false, },
-                            { endDate: { $lte: Date.now() } },
+                            {
+                                $or: [
+                                    { endDate: { $lt: Date.now() } },
+                                    {
+                                        date: {
+                                            $lt: new Date().setHours(0, 0, 0, 0),
+                                        }
+                                    }
+                                ]
+                            }
+
+
                         ]
                     })
                     .sort({ publicationDate: -1 })
