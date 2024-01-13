@@ -4,6 +4,7 @@ const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
+const _ = require('lodash')
 
 
 const logger = require('../logger.js')
@@ -395,15 +396,31 @@ module.exports = {
         return posterFromDb.save()
     },
     async getActiveCategories() {
-        return [...new Set((await PosterModel.find({
+        let activePosters = await PosterModel.find({
             $and: [
                 { isHidden: false },
                 { isModerated: true },
                 { isDraft: false },
                 { rejected: false, },
                 { endDate: { $gt: Date.now() } },
-
+                {
+                    $or: [
+                        { date: { $eq: [] } },
+                        {
+                            date: {
+                                $gt: new Date().setHours(0, 0, 0, 0),
+                            }
+                        }
+                    ]
+                }
             ]
-        })).map(item => item.eventType).flat())]
+        })
+        let typesArray = activePosters
+            .map(item => item.eventType)
+            .flat()
+        let uniqTypes = _.uniq(typesArray)
+
+        return uniqTypes
     }
+
 }
