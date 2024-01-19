@@ -189,7 +189,19 @@ module.exports = {
                 { isModerated: true },
                 { isDraft: false },
                 { rejected: false, },
-                { endDate: { $gte: new Date().setHours(0, 0, 0, 0), } }
+                { endDate: { $gte: new Date().setHours(0, 0, 0, 0), } },
+            ],
+            $or: [
+                {
+                    endEventDate: { 
+                        $gte: Date.now()
+                    }
+                },
+                {
+                    endEventDate: {
+                        $exists: false
+                    }
+                }
             ]
         }
         if (eventType?.length) {
@@ -336,8 +348,22 @@ module.exports = {
                                             }
                                         }
                                     ]
+                                },
+                                {
+                                    $or: [
+                                        {
+                                            endEventDate: { 
+                                                $gte: Date.now()
+                                            }
+                                        },
+                                        {
+                                            endEventDate: {
+                                                $exists: false
+                                            }
+                                        }
+                                    ]
                                 }
-                            ]
+                            ],
                         },
                     )
                     .sort({ publicationDate: -1 })
@@ -361,9 +387,21 @@ module.exports = {
                                         }
                                     }
                                 ]
-                            }
-
-
+                            },
+                            { 
+                                $or: [
+                                    {
+                                        endEventDate: { 
+                                            $lt: Date.now()
+                                        }
+                                    },
+                                    {
+                                        endEventDate: {
+                                            $exists: false
+                                        }
+                                    }
+                                ] 
+                            }               
                         ]
                     })
                     .sort({ publicationDate: -1 })
