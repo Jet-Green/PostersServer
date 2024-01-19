@@ -60,7 +60,7 @@ module.exports = {
 
         const token = TokenService.createResetToken(payload, secret)
 
-        const link = process.env.CLIENT_URL + `/forgot-password?user_id=${candidate._id}&token=${token}`
+        const link = process.env.CLIENT_URL + `/forgotpassword?user_id=${candidate._id}&token=${token}`
 
         // порпишу html тут, чтобы не отправлять токен на клиент
         sendMail(
