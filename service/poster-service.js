@@ -450,6 +450,25 @@ module.exports = {
                                     }
                                 }
                             ]
+                        },
+                        {
+                            $or: [
+                                {
+                                    endEventDate: {
+                                        $gte: Date.now()
+                                    }
+                                },
+                                {
+                                    endEventDate: {
+                                        $exists: false
+                                    }
+                                },
+                                {
+                                    endEventDate: {
+                                        $eq: null
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
