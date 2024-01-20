@@ -380,68 +380,27 @@ module.exports = {
         }
         return posters
     },
-    async getPostersMiniature({organizer,poster_id, poster_status }) {
-        let posters = []
-        switch (poster_status) {
-            case 'active':
-                posters = await PosterModel
-                    .find(
+    async getPostersMiniature({ organizer, poster_id }) {
+        let posters = await PosterModel
+            .find(
+                {
+                    $and: [
+                        { _id: { $ne: poster_id }, organizer: organizer, isModerated: true, isDraft: false, rejected: false, },
+                        { endDate: { $gt: Date.now() } },
                         {
-                            $and: [
-                                { _id: {$ne: poster_id}, organizer: organizer, isModerated: true, isDraft: false, rejected: false, },
-                                { endDate: { $gt: Date.now() } },
+                            $or: [
+                                { date: { $eq: [] } },
                                 {
-                                    $or: [
-                                        { date: { $eq: [] } },
-                                        {
-                                            date: {
-                                                $gt: new Date().setHours(0, 0, 0, 0),
-                                            }
-                                        }
-                                    ]
+                                    date: {
+                                        $gt: new Date().setHours(0, 0, 0, 0),
+                                    }
                                 }
                             ]
-                        },
-                    )
-                    .sort({ publicationDate: -1 })
-                break
-            case 'onModeration':
-                posters = await PosterModel
-                    .find({ $and: [{organizer: organizer, isModerated: false, isDraft: false, rejected: false, }] })
-                    .sort({ publicationDate: -1 })
-                break
-            case 'archive':
-                posters = await PosterModel
-                    .find({
-                        $and: [
-                            { organizer: organizer, isModerated: true, isDraft: false, rejected: false, },
-                            {
-                                $or: [
-                                    { endDate: { $lt: Date.now() } },
-                                    {
-                                        date: {
-                                            $lt: new Date().setHours(0, 0, 0, 0),
-                                        }
-                                    }
-                                ]
-                            }
-
-
-                        ]
-                    })
-                    .sort({ publicationDate: -1 })
-                break
-            case 'draft':
-                posters = await PosterModel
-                    .find({ $and: [{ organizer: organizer, isDraft: true }] })
-                    .sort({ publicationDate: -1 })
-                break
-            case 'rejected':
-                posters = await PosterModel
-                    .find({ $and: [{ organizer: organizer, rejected: true, isDraft: false }] })
-                    .sort({ publicationDate: -1 })
-                break
-        }
+                        }
+                    ]
+                },
+            )
+            .sort({ publicationDate: -1 })
         return posters
     },
     async editPoster({ poster, hotfix }, _id) {
