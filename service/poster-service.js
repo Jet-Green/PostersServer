@@ -4,6 +4,7 @@ const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
+const _ = require('lodash')
 
 
 const logger = require('../logger.js')
@@ -188,7 +189,24 @@ module.exports = {
                 { isModerated: true },
                 { isDraft: false },
                 { rejected: false, },
-                { endDate: { $gte: new Date().setHours(0, 0, 0, 0), } }
+                { endDate: { $gte: new Date().setHours(0, 0, 0, 0), } },
+            ],
+            $or: [
+                {
+                    endEventDate: {
+                        $gte: Date.now()
+                    }
+                },
+                {
+                    endEventDate: {
+                        $exists: false
+                    }
+                },
+                {
+                    endEventDate: {
+                        $eq: null
+                    }
+                }
             ]
         }
         if (eventType?.length) {
@@ -335,8 +353,27 @@ module.exports = {
                                             }
                                         }
                                     ]
+                                },
+                                {
+                                    $or: [
+                                        {
+                                            endEventDate: {
+                                                $gte: Date.now()
+                                            }
+                                        },
+                                        {
+                                            endEventDate: {
+                                                $exists: false
+                                            }
+                                        },
+                                        {
+                                            endEventDate: {
+                                                $eq: null
+                                            }
+                                        }
+                                    ]
                                 }
-                            ]
+                            ],
                         },
                     )
                     .sort({ publicationDate: -1 })
@@ -360,9 +397,26 @@ module.exports = {
                                         }
                                     }
                                 ]
+                            },
+                            {
+                                $or: [
+                                    {
+                                        endEventDate: {
+                                            $lt: Date.now()
+                                        }
+                                    },
+                                    {
+                                        endEventDate: {
+                                            $exists: false
+                                        }
+                                    },
+                                    {
+                                        endEventDate: {
+                                            $eq: null
+                                        }
+                                    }
+                                ]
                             }
-
-
                         ]
                     })
                     .sort({ publicationDate: -1 })
@@ -418,15 +472,31 @@ module.exports = {
         return posterFromDb.save()
     },
     async getActiveCategories() {
-        return [...new Set((await PosterModel.find({
+        let activePosters = await PosterModel.find({
             $and: [
                 { isHidden: false },
                 { isModerated: true },
                 { isDraft: false },
                 { rejected: false, },
                 { endDate: { $gt: Date.now() } },
-
+                {
+                    $or: [
+                        { date: { $eq: [] } },
+                        {
+                            date: {
+                                $gt: new Date().setHours(0, 0, 0, 0),
+                            }
+                        }
+                    ]
+                }
             ]
-        })).map(item => item.eventType).flat())]
+        })
+        let typesArray = activePosters
+            .map(item => item.eventType)
+            .flat()
+        let uniqTypes = _.uniq(typesArray)
+
+        return uniqTypes
     }
+
 }
