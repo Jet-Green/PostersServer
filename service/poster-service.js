@@ -193,13 +193,18 @@ module.exports = {
             ],
             $or: [
                 {
-                    endEventDate: { 
+                    endEventDate: {
                         $gte: Date.now()
                     }
                 },
                 {
                     endEventDate: {
                         $exists: false
+                    }
+                },
+                {
+                    endEventDate: {
+                        $eq: null
                     }
                 }
             ]
@@ -352,13 +357,18 @@ module.exports = {
                                 {
                                     $or: [
                                         {
-                                            endEventDate: { 
+                                            endEventDate: {
                                                 $gte: Date.now()
                                             }
                                         },
                                         {
                                             endEventDate: {
                                                 $exists: false
+                                            }
+                                        },
+                                        {
+                                            endEventDate: {
+                                                $eq: null
                                             }
                                         }
                                     ]
@@ -388,10 +398,10 @@ module.exports = {
                                     }
                                 ]
                             },
-                            { 
+                            {
                                 $or: [
                                     {
-                                        endEventDate: { 
+                                        endEventDate: {
                                             $lt: Date.now()
                                         }
                                     },
@@ -399,9 +409,14 @@ module.exports = {
                                         endEventDate: {
                                             $exists: false
                                         }
+                                    },
+                                    {
+                                        endEventDate: {
+                                            $eq: null
+                                        }
                                     }
-                                ] 
-                            }               
+                                ]
+                            }
                         ]
                     })
                     .sort({ publicationDate: -1 })
