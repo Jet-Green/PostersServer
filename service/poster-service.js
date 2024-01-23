@@ -179,7 +179,7 @@ module.exports = {
         return filename
     },
     async findMany(filter) {
-        let { searchText, date, eventType, eventSubtype, eventLocation, page } = filter
+        let { searchText, date, eventType, eventSubtype, eventLocation, page, posterType } = filter
         const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -203,6 +203,11 @@ module.exports = {
                     }
                 }
             ]
+        }
+        if (posterType) {
+            query.$and.push({
+                posterType
+            })
         }
         if (eventType?.length) {
             query.$and.push({

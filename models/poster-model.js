@@ -33,6 +33,7 @@ const PosterSchema = new Schema({
     endDate: Number,
 
     createdDate: Number,
+    posterType: String, // 'place' or 'event'
 
     isDraft: { type: Boolean, default: false }
 })
