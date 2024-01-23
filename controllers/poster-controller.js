@@ -134,6 +134,13 @@ module.exports = {
             next(error)
         }
     },
+    async getPostersMiniature(req, res, next) {
+        try {
+            return res.json(await PosterService.getPostersMiniature(req.query))
+        } catch (error) {
+            next(error)
+        }
+    },
     async editPoster(req, res, next) {
         try {
             return res.json(await PosterService.editPoster(req.body, req.query._id))

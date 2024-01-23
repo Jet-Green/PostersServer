@@ -193,13 +193,18 @@ module.exports = {
             ],
             $or: [
                 {
-                    endEventDate: { 
+                    endEventDate: {
                         $gte: Date.now()
                     }
                 },
                 {
                     endEventDate: {
                         $exists: false
+                    }
+                },
+                {
+                    endEventDate: {
+                        $eq: null
                     }
                 }
             ]
@@ -357,13 +362,18 @@ module.exports = {
                                 {
                                     $or: [
                                         {
-                                            endEventDate: { 
+                                            endEventDate: {
                                                 $gte: Date.now()
                                             }
                                         },
                                         {
                                             endEventDate: {
                                                 $exists: false
+                                            }
+                                        },
+                                        {
+                                            endEventDate: {
+                                                $eq: null
                                             }
                                         }
                                     ]
@@ -393,10 +403,10 @@ module.exports = {
                                     }
                                 ]
                             },
-                            { 
+                            {
                                 $or: [
                                     {
-                                        endEventDate: { 
+                                        endEventDate: {
                                             $lt: Date.now()
                                         }
                                     },
@@ -404,9 +414,14 @@ module.exports = {
                                         endEventDate: {
                                             $exists: false
                                         }
+                                    },
+                                    {
+                                        endEventDate: {
+                                            $eq: null
+                                        }
                                     }
-                                ] 
-                            }               
+                                ]
+                            }
                         ]
                     })
                     .sort({ publicationDate: -1 })
@@ -422,6 +437,48 @@ module.exports = {
                     .sort({ publicationDate: -1 })
                 break
         }
+        return posters
+    },
+    async getPostersMiniature({ organizer, poster_id }) {
+        let posters = await PosterModel
+            .find(
+                {
+                    $and: [
+                        { _id: { $ne: poster_id }, organizer: organizer, isModerated: true, isDraft: false, rejected: false, },
+                        { endDate: { $gt: Date.now() } },
+                        {
+                            $or: [
+                                { date: { $eq: [] } },
+                                {
+                                    date: {
+                                        $gt: new Date().setHours(0, 0, 0, 0),
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            $or: [
+                                {
+                                    endEventDate: {
+                                        $gte: Date.now()
+                                    }
+                                },
+                                {
+                                    endEventDate: {
+                                        $exists: false
+                                    }
+                                },
+                                {
+                                    endEventDate: {
+                                        $eq: null
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+            )
+            .sort({ publicationDate: -1 })
         return posters
     },
     async editPoster({ poster, hotfix }, _id) {

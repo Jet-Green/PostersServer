@@ -14,6 +14,7 @@ router.post('/create',authMiddleware, PosterController.create)
 router.post('/create-draft',authMiddleware, PosterController.createDraft)
 
 router.get('/get-posters',authMiddleware, PosterController.getPosters)
+router.get('/get-posters-miniature',authMiddleware, PosterController.getPostersMiniature)
 router.get('/get-active-categories', PosterController.getActiveCategories)
 router.post('/get-all', PosterController.getAll)
 router.post('/find', PosterController.find)
