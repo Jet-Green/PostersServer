@@ -11,24 +11,31 @@ const upload = new Upload({
     api
 });
 
-module.exports = process.env.NODE_ENV == 'production' ?{
+module.exports = process.env.NODE_ENV == 'production' ? {
+
     async postInGroup(message, poster) {
- 
-        const image = await upload.wallPhoto({
-            source: {
-                value: poster.image
-            }
-        })    
-        const response = await vk.api.wall.post({
-            message:`${poster.eventType.join('|')}  ${poster.title}`,
-            owner_id:-222755810,
-            from_group:1,
-            attachments: `${image}, ${message}`
-        });
-  
-        return response
+
+        try {
+            const image = await upload.wallPhoto({
+                source: {
+                    value: poster.image
+                }
+            })
+            const response = await vk.api.wall.post({
+                message: `${poster.eventType.join('|')}  ${poster.title}`,
+                owner_id: -222755810,
+                from_group: 1,
+                attachments: `${image}, ${message}`
+            });
+
+            return response
+        } catch (error) {
+            console.log(error)
+        }
+
+
         // let response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&attachments=attachments&message=${poster.eventType.join('|')} ${poster.title}&owner_id=-222755810&from_group=1`)
-    
+
         // return response
     }
 } : { async postInGroup(message) { } }
