@@ -194,7 +194,7 @@ module.exports = {
             $or: [
                 {
                     endEventDate: {
-                        $gte: Date.now()
+                        $gte: new Date().setHours(23, 59, 59, 99)
                     }
                 },
                 {
@@ -363,7 +363,7 @@ module.exports = {
                                     $or: [
                                         {
                                             endEventDate: {
-                                                $gte: Date.now()
+                                                $gte: new Date().setHours(23, 59, 59, 99)
                                             }
                                         },
                                         {
@@ -407,7 +407,7 @@ module.exports = {
                                 $or: [
                                     {
                                         endEventDate: {
-                                            $lt: Date.now()
+                                            $lt: new Date().setHours(23, 59, 59, 99)
                                         }
                                     },
                                     {
@@ -460,7 +460,7 @@ module.exports = {
                             $or: [
                                 {
                                     endEventDate: {
-                                        $gte: Date.now()
+                                        $gte: new Date().setHours(23, 59, 59, 99)
                                     }
                                 },
                                 {
