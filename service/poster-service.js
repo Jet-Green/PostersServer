@@ -444,7 +444,7 @@ module.exports = {
             .find(
                 {
                     $and: [
-                        { _id: { $ne: poster_id }, organizer: organizer, isModerated: true, isDraft: false, rejected: false, },
+                        { _id: { $ne: poster_id }, organizer: organizer, isModerated: true, isDraft: false, rejected: false, isHidden: false },
                         { endDate: { $gt: Date.now() } },
                         {
                             $or: [
