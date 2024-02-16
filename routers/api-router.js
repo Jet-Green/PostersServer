@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/auth-middleware')
 
 router.post('/get-all', apiMiddleware, apiController.getAll)
 router.get('/get-posters-types', apiMiddleware, apiController.getTypes)
+router.post('/reg-nodemailer', apiController.sendEmail)
 
 
 module.exports = router

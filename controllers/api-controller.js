@@ -1,5 +1,6 @@
 const posterModel = require("../models/poster-model")
 const apiService = require('../service/api-service')
+const { sendMail } = require('../middleware/mailer')
 module.exports = {
     async getAll(req, res, next) {
         try {
@@ -12,5 +13,8 @@ module.exports = {
     },
     async getTypes(req, res, next) {
          return  res.json(await apiService.getTypes())
-    }
+    },
+    async sendEmail(req, res, next) {
+        return sendMail(req.body.emailHtml.html, ['grachevrv@ya.ru,savelijsutov@gmail.com'], 'Новый пользователь хакатон')
+   }
 }

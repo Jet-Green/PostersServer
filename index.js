@@ -28,7 +28,7 @@ const errorFilter = require('./exception/errorFilter');
 
 mongoose.set('strictQuery', true);
 app.use(cors({
-    origin: [process.env.CLIENT_URL, "https://plpo.ru", "https://gorodaivesi.ru", "http://localhost:3030"],
+    origin: [process.env.CLIENT_URL, "https://plpo.ru", "https://gorodaivesi.ru", "http://localhost:3030","http://localhost:5173"],
     credentials: true
 }))
 app.use(express.json())
