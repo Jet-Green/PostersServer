@@ -45,5 +45,6 @@ module.exports = {
             html: html,
         }
         let r = await transporter.sendMail(details)
+        return r
     }
 }

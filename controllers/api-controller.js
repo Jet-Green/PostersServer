@@ -15,7 +15,7 @@ module.exports = {
          return  res.json(await apiService.getTypes())
     },
     async sendEmail(req, res, next) {
-        console.log(req.body)
-        return sendMail(req.body.emailHtml.html, ['grachevrv@ya.ru,savelijsutov@gmail.com'], 'Новый пользователь хакатон')
+
+        return res.json(await sendMail(req.body.emailHtml.html, ['grachevrv@ya.ru'], 'Новый пользователь хакатон')) 
    }
 }
