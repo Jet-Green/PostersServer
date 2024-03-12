@@ -48,5 +48,18 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    /**
+    * body {
+    * email: user email
+    * role: manager-${city id}
+    * }
+    */
+    async userToManager(req, res, next) {
+        try {
+            return res.json(await appStateService.userToManager(req.body))
+        } catch (error) {
+            next(error)
+        }
     }
 }

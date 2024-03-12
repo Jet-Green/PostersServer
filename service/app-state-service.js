@@ -30,6 +30,9 @@ module.exports = {
         return AppStateModel.findOneAndUpdate({}, { $pull: { eventTypes: { name: eventType } } })
     },
     getUsers() {
-        return UserModel.find({}, {firstname: 1, lastname: 1, email: 1, phone: 1})
+        return UserModel.find({}, { firstname: 1, lastname: 1, email: 1, phone: 1 })
+    },
+    userToManager({ email, role }) {
+        return UserModel.findOneAndUpdate({ email }, { $push: { roles: role } })
     }
 }
