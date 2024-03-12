@@ -33,9 +33,14 @@ module.exports = {
         return UserModel.find({}, { firstname: 1, lastname: 1, email: 1, phone: 1 })
     },
     getManagers() {
+        // если есть роль, которая начинается с manager.
         return UserModel.find({ roles: { $elemMatch: { $regex: 'manager', $options: 'i' } } }, { firstname: 1, lastname: 1, email: 1, phone: 1, roles: 1 })
     },
     userToManager({ email, role }) {
         return UserModel.findOneAndUpdate({ email }, { $push: { roles: role } })
+    },
+    managerToUser(userId) {
+        // убираем только роли, начинающиеся с manager.
+        return UserModel.findByIdAndUpdate(userId, { $pull: { roles: { $regex: 'manager', $options: 'i' } } })
     }
 }

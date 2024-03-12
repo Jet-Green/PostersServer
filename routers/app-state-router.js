@@ -13,7 +13,7 @@ router.post('/delete-event-type', authMiddleware, appStateController.deleteEvent
 router.get('/get-users', authMiddleware, appStateController.getUsers)
 
 router.get('/managers', authMiddleware, appStateController.getManagers)
-
 router.post('/user-to-manager', authMiddleware, appStateController.userToManager)
+router.post('/manager-to-user', authMiddleware, appStateController.managerToUser)
 
 module.exports = router

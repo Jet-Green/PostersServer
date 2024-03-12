@@ -62,11 +62,22 @@ module.exports = {
             next(error)
         }
     },
+    /**
+    * body {
+    * userId
+    * }
+    */
+    async managerToUser(req, res, next) {
+        try {
+            return res.json(await appStateService.managerToUser(req.body.userId))
+        } catch (error) {
+            next(error)
+        }
+    },
     async getManagers(req, res, next) {
         try {
             return res.json(await appStateService.getManagers())
         } catch (error) {
-            console.log(error);
             next(error)
         }
     }
