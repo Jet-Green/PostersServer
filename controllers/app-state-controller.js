@@ -61,5 +61,13 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    async getManagers(req, res, next) {
+        try {
+            return res.json(await appStateService.getManagers())
+        } catch (error) {
+            console.log(error);
+            next(error)
+        }
     }
 }

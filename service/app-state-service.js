@@ -32,6 +32,9 @@ module.exports = {
     getUsers() {
         return UserModel.find({}, { firstname: 1, lastname: 1, email: 1, phone: 1 })
     },
+    getManagers() {
+        return UserModel.find({ roles: { $elemMatch: { $regex: 'manager', $options: 'i' } } }, { firstname: 1, lastname: 1, email: 1, phone: 1, roles: 1 })
+    },
     userToManager({ email, role }) {
         return UserModel.findOneAndUpdate({ email }, { $push: { roles: role } })
     }
