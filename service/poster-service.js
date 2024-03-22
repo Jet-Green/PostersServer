@@ -524,6 +524,32 @@ module.exports = {
         let uniqTypes = _.uniq(typesArray)
 
         return uniqTypes
-    }
+    },
+    async getActiveCities() {
+        let activePosters = await PosterModel.find({
+            $and: [
+                { isHidden: false },
+                { isModerated: true },
+                { isDraft: false },
+                { rejected: false, },
+                { endDate: { $gt: Date.now() } },
+                {
+                    $or: [
+                        { date: { $eq: [] } },
+                        {
+                            date: {
+                                $gt: new Date().setHours(0, 0, 0, 0),
+                            }
+                        }
+                    ]
+                }
+            ]
+        }, { 'eventLocation.city_with_type': 1 })
+        let typesArray = activePosters
+            .map(item => item.eventLocation.city_with_type)
+            .flat()
+        let uniqTypes = _.uniq(typesArray)
 
+        return uniqTypes
+    }
 }
