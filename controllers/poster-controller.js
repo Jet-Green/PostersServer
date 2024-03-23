@@ -162,4 +162,11 @@ module.exports = {
             next(error)
         }
     },
+    async getActiveCities(req, res, next) {
+        try {
+            return res.json(await PosterService.getActiveCities())
+        } catch (error) {
+            next(error)
+        }
+    },
 }

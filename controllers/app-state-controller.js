@@ -48,5 +48,37 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    /**
+    * body {
+    * email: user email
+    * role: manager-${city id}
+    * }
+    */
+    async userToManager(req, res, next) {
+        try {
+            return res.json(await appStateService.userToManager(req.body))
+        } catch (error) {
+            next(error)
+        }
+    },
+    /**
+    * body {
+    * userId
+    * }
+    */
+    async managerToUser(req, res, next) {
+        try {
+            return res.json(await appStateService.managerToUser(req.body.userId))
+        } catch (error) {
+            next(error)
+        }
+    },
+    async getManagers(req, res, next) {
+        try {
+            return res.json(await appStateService.getManagers())
+        } catch (error) {
+            next(error)
+        }
     }
 }

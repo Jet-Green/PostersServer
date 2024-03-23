@@ -102,7 +102,7 @@ module.exports = {
         const hashPassword = await bcrypt.hash(password, 3)
         // const adminUserRole = await RoleModel.findOne({ value: 'admin' })
         const defaultUserRole = await RoleModel.findOne({ value: 'user' })
-        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone, roles: [defaultUserRole], })
+        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone: this.processPhoneNumber(phone), roles: [defaultUserRole], })
 
         const tokens = TokenService.generateTokens({ email, hashPassword, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
@@ -170,7 +170,8 @@ module.exports = {
     async update(user) {
         let email = user.email;
         delete user.email
-        return await UserModel.findOneAndUpdate({ email }, user, {
+        let phone = user.phone
+        return await UserModel.findOneAndUpdate({ email, phone: this.processPhoneNumber(phone) }, user, {
             new: true
         })
     },
@@ -181,5 +182,11 @@ module.exports = {
     subscriptionCount({ _id }) {
         return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 , })
     },
-   
+    processPhoneNumber(phone_number) {
+        phone_number = phone_number.replace(/[^0-9]/g, "")
+        if (phone_number.length === 11 && phone_number[0] === '8') {
+            phone_number = '7' + phone_number.slice(1)
+        }
+        return phone_number
+    }
 }

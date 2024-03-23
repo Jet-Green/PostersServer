@@ -444,7 +444,7 @@ module.exports = {
             .find(
                 {
                     $and: [
-                        { _id: { $ne: poster_id }, organizer: organizer, isModerated: true, isDraft: false, rejected: false, isHidden: false },
+                        { _id: { $ne: poster_id }, isModerated: true, isDraft: false, rejected: false, isHidden: false },
                         { endDate: { $gt: Date.now() } },
                         {
                             $or: [
@@ -478,6 +478,9 @@ module.exports = {
                     ]
                 },
             )
+            .$where(`function() {
+                return this.organizer.replace(/[^a-zа-яё]/gi, "").toLowerCase() === '${organizer}'.replace(/[^a-zа-яё]/gi, "").toLowerCase()
+            }`)
             .sort({ publicationDate: -1 })
         return posters
     },
@@ -521,6 +524,32 @@ module.exports = {
         let uniqTypes = _.uniq(typesArray)
 
         return uniqTypes
-    }
+    },
+    async getActiveCities() {
+        let activePosters = await PosterModel.find({
+            $and: [
+                { isHidden: false },
+                { isModerated: true },
+                { isDraft: false },
+                { rejected: false, },
+                { endDate: { $gt: Date.now() } },
+                {
+                    $or: [
+                        { date: { $eq: [] } },
+                        {
+                            date: {
+                                $gt: new Date().setHours(0, 0, 0, 0),
+                            }
+                        }
+                    ]
+                }
+            ]
+        }, { 'eventLocation.city_with_type': 1 })
+        let typesArray = activePosters
+            .map(item => item.eventLocation.city_with_type)
+            .flat()
+        let uniqTypes = _.uniq(typesArray)
 
+        return uniqTypes
+    }
 }
