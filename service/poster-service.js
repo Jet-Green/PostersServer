@@ -253,6 +253,18 @@ module.exports = {
                     }
                 })
                 break
+            case '':
+                query.$and.push({
+                    $or: [
+                        { date: { $eq: [] } },
+                        {
+                            date: {
+                                $gt: new Date().setHours(0, 0, 0, 0),
+                            }
+                        }
+                    ]
+                })
+                    break
 
 
             default:
