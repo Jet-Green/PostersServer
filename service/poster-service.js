@@ -222,6 +222,7 @@ module.exports = {
         if (eventSubtype?.length) {
             query.$and.push({ eventSubtype: { $in: eventSubtype } })
         }
+        console.log(new Date(filter.date))
         switch (date) {
             case 'Сегодня':
                 query.$and.push({
@@ -269,17 +270,14 @@ module.exports = {
 
             default:
                 query.$and.push({
-                    $or: [
-                        { date: { $eq: [] } },
-                        {
-                            date: {
-                                $gt: new Date().setHours(0, 0, 0, 0),
+                    date: {
+                            $elemMatch: {
+                                $gt: new Date(filter.date).setHours(0, 0, 0, 0),
+                                $lt: new Date(filter.date).setHours(23,59,59,999)
                             }
                         }
-                    ]
                 })
         }
-
         if (eventLocation != "") {
             query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
