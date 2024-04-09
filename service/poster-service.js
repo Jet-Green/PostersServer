@@ -222,7 +222,6 @@ module.exports = {
         if (eventSubtype?.length) {
             query.$and.push({ eventSubtype: { $in: eventSubtype } })
         }
-        console.log(new Date(filter.date))
         switch (date) {
             case 'Сегодня':
                 query.$and.push({
@@ -266,14 +265,13 @@ module.exports = {
                     ]
                 })
                     break
-
-
             default:
                 query.$and.push({
                     date: {
                             $elemMatch: {
-                                $gt: new Date(filter.date).setHours(0, 0, 0, 0),
-                                $lt: new Date(filter.date).setHours(23,59,59,999)
+                                $gt: new Date(filter.date).setHours(4, 0, 0, 0),
+                                $lt: new Date(filter.date).setHours(27,59,59,999)
+                                //GMT+4
                             }
                         }
                 })
