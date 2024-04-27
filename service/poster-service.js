@@ -269,8 +269,9 @@ module.exports = {
                 query.$and.push({
                     date: {
                             $elemMatch: {
-                                $gt: new Date(filter.date).setHours(0, 0, 0, 0),
-                                $lt: new Date(filter.date).setHours(23, 59, 59, 999)
+                              
+                                $gt: new Date(filter.date).toUTCString().setHours(4, 0, 0, 0),
+                                $lt: new Date(filter.date).toUTCString().setHours(27,59,59,999)
                                 //GMT+4
                             }
                         }
