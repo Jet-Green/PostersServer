@@ -270,13 +270,14 @@ module.exports = {
                     date: {
                             $elemMatch: {
                               
-                                $gt: new Date(filter.date).toUTCString().setHours(4, 0, 0, 0),
-                                $lt: new Date(filter.date).toUTCString().setHours(27,59,59,999)
+                                $gt: new Date(filter.date).setHours(4, 0, 0, 0),
+                                $lt: new Date(filter.date).setHours(27,59,59,999)
                                 //GMT+4
                             }
                         }
                 })
         }
+
         if (eventLocation != "") {
             query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
