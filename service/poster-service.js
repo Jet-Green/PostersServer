@@ -269,13 +269,13 @@ module.exports = {
                 query.$and.push({
                     date: {
                             $elemMatch: {
-                                $gt: new Date(filter.date).setHours(4, 0, 0, 0),
-                                $lt: new Date(filter.date).setHours(27,59,59,999)
-                                //GMT+4
+                                $gt: new Date(filter.date).setHours(0, 0, 0, 0),
+                                $lt: new Date(filter.date).setHours(23,59,59,999)
+                                //GMT+0
                             }
                         }
                 })
-        }
+            }
         if (eventLocation != "") {
             query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
