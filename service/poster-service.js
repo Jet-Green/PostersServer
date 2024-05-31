@@ -552,9 +552,9 @@ module.exports = {
                     ]
                 }
             ]
-        }, { 'eventLocation.city_with_type': 1,'eventLocation.area_with_type': 1 })
+        }, { 'eventLocation.city_with_type': 1,'eventLocation.settlement_with_type': 1 })
         let typesArray = activePosters
-            .map(item => item.eventLocation.city_with_type ? item.eventLocation.city_with_type : item.eventLocation.area_with_type)
+            .map(item => item.eventLocation.city_with_type ? item.eventLocation.city_with_type : item.eventLocation.settlement_with_type)
             .flat()
         let uniqTypes = _.uniq(typesArray)
 
