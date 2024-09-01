@@ -157,7 +157,7 @@ module.exports = {
     },
     async getActiveCategories(req, res, next) {
         try {
-            return res.json(await PosterService.getActiveCategories())
+            return res.json(await PosterService.getActiveCategories(req.query.location))
         } catch (error) {
             next(error)
         }

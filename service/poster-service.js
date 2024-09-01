@@ -506,8 +506,8 @@ module.exports = {
 
         return posterFromDb.save()
     },
-    async getActiveCategories() {
-        let activePosters = await PosterModel.find({
+    async getActiveCategories(location) {
+        let query = {
             $and: [
                 { isHidden: false },
                 { isModerated: true },
@@ -525,7 +525,11 @@ module.exports = {
                     ]
                 }
             ]
-        })
+        }
+        if (location != "") {
+            query.$and.push({ 'eventLocation.name': { $regex: location, $options: 'i' } })
+        }
+        let activePosters = await PosterModel.find(query)
         let typesArray = activePosters
             .map(item => item.eventType)
             .flat()
