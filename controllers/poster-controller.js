@@ -16,7 +16,7 @@ module.exports = {
 
                 let poster = await PosterService.getById(req.query._id)
                 if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
-                    vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
+                    // vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
                 }
             }
 
