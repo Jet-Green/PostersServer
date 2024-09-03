@@ -4,6 +4,7 @@ const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
+const vkapi = require('../middleware/vk-api.js')
 const _ = require('lodash')
 
 
@@ -39,7 +40,12 @@ module.exports = {
             logger.info({ _id, userId }, 'poster moderated and published')
 
             // вызывает конфиликт с ботом в продакшене
-            telegramService.sendPost(await PosterModel.findById(_id))
+            let poster = await PosterModel.findById(_id)
+            if (poster.eventLocation.name == "Удмуртская Респ, г Глазов") {
+                telegramService.sendPost(poster)
+                vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
+            }
+            
 
             // 2592000000 - 30 дней
             return PosterModel.findByIdAndUpdate(_id, {

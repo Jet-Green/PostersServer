@@ -1,6 +1,6 @@
 const { sendMail } = require('../middleware/mailer')
 const PosterService = require('../service/poster-service')
-const vkapi = require('../middleware/vk-api')
+// const vkapi = require('../middleware/vk-api')
 
 module.exports = {
     async rejectPoster(req, res, next) {
@@ -14,10 +14,10 @@ module.exports = {
         try {
             // if (process.env.NODE_ENV == 'production') {
              
-                let poster = await PosterService.getById(req.query._id)
+                // let poster = await PosterService.getById(req.query._id)
 
                
-                vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
+                // vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
             // }
 
             return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
