@@ -12,18 +12,25 @@ module.exports = {
     },
     async moderatePoster(req, res, next) {
         try {
-            if (process.env.NODE_ENV == 'production') {
-
-                let poster = await PosterService.getById(req.query._id)
+            if (process.env.NODE_ENV === 'production') {
+                let poster = await PosterService.getById(req.query._id);
+                
                 if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
-                    vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
+                    try {
+                        await vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster);
+                    } catch (vkError) {
+                        console.error("Error posting in VK group:", vkError);
+                        // Handle the error or log it, but don't stop execution
+                    }
                 }
-            }       
+            }
+            
+            // Regardless of the vkapi result, proceed to moderate the poster
+            return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId));
         } catch (error) {
-            next(error)
+            next(error);
         }
-        return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
-    },
+    }
     async getAll(req, res, next) {
         try {
             return res.json(await PosterService.findMany(req.body))
