@@ -16,14 +16,13 @@ module.exports = {
 
                 let poster = await PosterService.getById(req.query._id)
                 if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
-                    // vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
+                    vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
                 }
-            }
-
-            return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
+            }       
         } catch (error) {
             next(error)
         }
+        return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId))
     },
     async getAll(req, res, next) {
         try {
