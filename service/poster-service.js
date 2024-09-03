@@ -41,13 +41,14 @@ module.exports = {
 
             // вызывает конфиликт с ботом в продакшене
             let poster = await PosterModel.findById(_id)
-            console.log("Мы до Глазова")
-            if (poster.eventLocation.name == "Удмуртская Респ, г Глазов") {
-                console.log("Мы в Глазове")
-                telegramService.sendPost(poster)
-                vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
+
+            if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
+                if (process.env.NODE_ENV == 'production') {
+                    telegramService.sendPost(poster)
+                    vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
+                }
             }
-            
+
 
             // 2592000000 - 30 дней
             return PosterModel.findByIdAndUpdate(_id, {
@@ -272,18 +273,18 @@ module.exports = {
                         }
                     ]
                 })
-                    break
+                break
             default:
                 query.$and.push({
                     date: {
-                            $elemMatch: {
-                                $gt: new Date(filter.date).setHours(0, 0, 0, 0),
-                                $lt: new Date(filter.date).setHours(23,59,59,999)
-                                //GMT+0
-                            }
+                        $elemMatch: {
+                            $gt: new Date(filter.date).setHours(0, 0, 0, 0),
+                            $lt: new Date(filter.date).setHours(23, 59, 59, 999)
+                            //GMT+0
                         }
+                    }
                 })
-            }
+        }
         if (eventLocation != "") {
             query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
@@ -564,7 +565,7 @@ module.exports = {
                     ]
                 }
             ]
-        }, { 'eventLocation.city_with_type': 1,'eventLocation.settlement_with_type': 1 })
+        }, { 'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1 })
         let typesArray = activePosters
             .map(item => item.eventLocation.city_with_type ? item.eventLocation.city_with_type : item.eventLocation.settlement_with_type)
             .flat()
