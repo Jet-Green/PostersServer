@@ -41,7 +41,9 @@ module.exports = {
 
             // вызывает конфиликт с ботом в продакшене
             let poster = await PosterModel.findById(_id)
+            console.log("Мы до Глазова")
             if (poster.eventLocation.name == "Удмуртская Респ, г Глазов") {
+                console.log("Мы в Глазове")
                 telegramService.sendPost(poster)
                 vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
             }
