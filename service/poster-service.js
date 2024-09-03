@@ -43,10 +43,9 @@ module.exports = {
             let poster = await PosterModel.findById(_id)
 
             if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
-                if (process.env.NODE_ENV == 'production') {
+        
                     telegramService.sendPost(poster)
-                    vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster)
-                }
+              
             }
 
 
