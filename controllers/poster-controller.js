@@ -1,6 +1,6 @@
 const { sendMail } = require('../middleware/mailer')
 const PosterService = require('../service/poster-service')
-// const vkapi = require('../middleware/vk-api')
+const vkapi = require('../middleware/vk-api')
 
 module.exports = {
     async rejectPoster(req, res, next) {
