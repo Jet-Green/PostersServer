@@ -30,7 +30,7 @@ module.exports = {
         } catch (error) {
             next(error);
         }
-    }
+    },
     async getAll(req, res, next) {
         try {
             return res.json(await PosterService.findMany(req.body))
