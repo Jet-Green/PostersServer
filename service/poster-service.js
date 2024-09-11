@@ -568,7 +568,7 @@ module.exports = {
         let typesArray = activePosters
             .map(item => item.eventLocation.city_with_type ? item.eventLocation.city_with_type : item.eventLocation.settlement_with_type)
             .flat()
-        let uniqTypes = _.uniq(typesArray)
+        let uniqTypes = _.uniq(typesArray).sort()
 
         return uniqTypes
     }
