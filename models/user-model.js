@@ -9,7 +9,8 @@ const UserSchema = new Schema({
     roles: { type: [String] },
     posters: [{ type: Schema.Types.ObjectId, ref: 'Poster' }],
     subscription: { count: { type: Number, default: 0 } },
-    contracts: { type: [Object] }
+    contracts: { type: [Object] },
+    managerIn: {type: [Object]}
 })
 
 module.exports = model('User', UserSchema);

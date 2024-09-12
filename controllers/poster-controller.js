@@ -1,6 +1,7 @@
 const { sendMail } = require('../middleware/mailer')
 const PosterService = require('../service/poster-service')
 const vkapi = require('../middleware/vk-api')
+const userModel = require('../models/user-model')
 
 module.exports = {
     async rejectPoster(req, res, next) {
@@ -14,7 +15,7 @@ module.exports = {
         try {
             if (process.env.NODE_ENV === 'production') {
                 let poster = await PosterService.getById(req.query._id);
-                
+
                 if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
                     try {
                         await vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster);
@@ -24,7 +25,7 @@ module.exports = {
                     }
                 }
             }
-            
+
             // Regardless of the vkapi result, proceed to moderate the poster
             return res.json(await PosterService.moderatePoster(req.query._id, req.query.userId));
         } catch (error) {
@@ -56,7 +57,16 @@ module.exports = {
     async create(req, res, next) {
         try {
             const posterId = await PosterService.createPoster(req.body)
-            if (process.env.NODE_ENV == 'production') {
+            if (process.env.NODE_ENV == 'production') {//process.env.NODE_ENV == 'production'
+                let usersToMail = await userModel.find({
+                    $or: [
+                        { "managerIn":{$elemMatch: { "type": "city_with_type", "name": req.body.poster.eventLocation.city_with_type } }},
+                        { "managerIn":{$elemMatch: { "type": "area_with_type", "name": req.body.poster.eventLocation.area_with_type } }},
+                        { "managerIn":{$elemMatch: { "type": "region_with_type", "name": req.body.poster.eventLocation.region_with_type } }},
+                    ]
+                }
+                );
+                usersToMail=usersToMail.map((item)=>item.email)
                 // mailing
                 await sendMail(`
                     <!DOCTYPE html>
@@ -66,7 +76,7 @@ module.exports = {
                     <body>
                     ${JSON.stringify(req.body)}
                     </body>
-                    </html>`, emails = ['grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
+                    </html>`, emails = [...usersToMail, 'grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
             }
 
             return res.json({ _id: posterId, message: 'Создано' })
