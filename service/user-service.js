@@ -9,6 +9,15 @@ const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exception/api-error');
 
 module.exports = {
+    async getByEmail(email) {
+        try{
+            let user = await UserModel.findOne({ email: email })
+            return user
+        }
+        catch(error){
+            console.log(error)
+        }
+    },
     async resetPassword(payload) {
         let { password, token, user_id } = payload;
         let result;

@@ -4,6 +4,7 @@ const authMiddleware = require('../middleware/auth-middleware')
 
 const router = Router()
 
+router.get('/get-by-email', userController.getByEmail)
 
 router.post('/registration', userController.registration)
 router.post('/login', userController.login)

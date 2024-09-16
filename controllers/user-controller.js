@@ -2,6 +2,15 @@ const UserService = require('../service/user-service')
 const logger = require('../logger');
 
 module.exports = {
+    async getByEmail(req, res, next) {
+        try {
+            x = res.json(await UserService.getByEmail(req.query.email))
+            // console.log(x)
+            return x
+        } catch (error) {
+            next(error)
+        }
+    },
     async resetPassword(req, res, next) {
         try {
             const userData = await UserService.resetPassword(req.body)
