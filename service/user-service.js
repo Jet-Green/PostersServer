@@ -10,11 +10,11 @@ const ApiError = require('../exception/api-error');
 
 module.exports = {
     async getByEmail(email) {
-        try{
+        try {
             let user = await UserModel.findOne({ email: email })
             return user
         }
-        catch(error){
+        catch (error) {
             console.log(error)
         }
     },
@@ -189,7 +189,7 @@ module.exports = {
         return UserModel.findByIdAndUpdate({ _id: buyEvent._id }, { $inc: { 'subscription.count': buyEvent.numberPosters } })
     },
     subscriptionCount({ _id }) {
-        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1 , })
+        return UserModel.findOne({ _id: _id }, { 'subscription.count': 1, })
     },
     processPhoneNumber(phone_number) {
         phone_number = phone_number.replace(/[^0-9]/g, "")
@@ -197,5 +197,15 @@ module.exports = {
             phone_number = '7' + phone_number.slice(1)
         }
         return phone_number
-    }
+    },
+    async removeLocationToEmail(managerIn, email) {
+        return await UserModel.findOneAndUpdate({ email: email }, { $pull: { managerIn: {  type: managerIn.type, name: managerIn.name } } })
+    },
+    async addLocationToEmail(email, select, location) {
+        let managerIn = {
+            type: select,
+            name: location
+        }
+        return await UserModel.findOneAndUpdate({ email: email }, { $push: { managerIn: managerIn } })
+    },
 }

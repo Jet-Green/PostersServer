@@ -124,6 +124,19 @@ module.exports = {
         } catch (error) {
             next(error)
         }
-    }
-
+    },
+    async removeLocationToEmail(req, res, next) {
+        try {
+            return res.json(await UserService.removeLocationToEmail(req.body.managerIn,req.body.email))
+        } catch (error) {
+            next(error)
+        }
+    },
+    async addLocationToEmail(req, res, next) {
+        try {
+            return res.json(await UserService.addLocationToEmail(req.body.email,req.body.select,req.body.location))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
