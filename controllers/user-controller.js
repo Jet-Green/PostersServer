@@ -139,4 +139,11 @@ module.exports = {
             next(error)
         }
     },
+    async removeManagerIn(req, res, next) {
+        try {
+            return res.json(await UserService.removeManagerIn(req.body.email))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
