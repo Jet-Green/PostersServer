@@ -23,5 +23,6 @@ router.post('/subscription-count', authMiddleware, userController.subscriptionCo
 router.post('/remove-location-to-email', userController.removeLocationToEmail)
 router.post('/add-location-to-email', userController.addLocationToEmail)
 router.post('/remove-manager-in', userController.removeManagerIn)
+router.get('/get-to-email', userController.getByEmail)
 
 module.exports = router

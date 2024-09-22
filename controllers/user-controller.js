@@ -127,14 +127,14 @@ module.exports = {
     },
     async removeLocationToEmail(req, res, next) {
         try {
-            return res.json(await UserService.removeLocationToEmail(req.body.managerIn,req.body.email))
+            return res.json(await UserService.removeLocationToEmail(req.body.managerIn, req.body.email))
         } catch (error) {
             next(error)
         }
     },
     async addLocationToEmail(req, res, next) {
         try {
-            return res.json(await UserService.addLocationToEmail(req.body.email,req.body.select,req.body.location))
+            return res.json(await UserService.addLocationToEmail(req.body.email, req.body.select, req.body.location))
         } catch (error) {
             next(error)
         }
@@ -142,6 +142,13 @@ module.exports = {
     async removeManagerIn(req, res, next) {
         try {
             return res.json(await UserService.removeManagerIn(req.body.email))
+        } catch (error) {
+            next(error)
+        }
+    },
+    async getByEmail(req, res, next) {
+        try {
+            return res.json(await UserService.getToEmail())
         } catch (error) {
             next(error)
         }
