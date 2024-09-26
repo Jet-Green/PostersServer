@@ -212,9 +212,9 @@ module.exports = {
     async removeManagerIn(email) {
         return await UserModel.updateOne({ email: email }, { $set: { managerIn: [] } })
     },
-    async getOtherManagers(email) {
+    async getManagers() {
         try {
-            return await UserModel.find({ managerIn: { $exists: 1 }, email:{$not:{email}} })
+            return await UserModel.find({ managerIn: { $exists: 1 } })
         }
         catch (error) {
             console.log(error)

@@ -146,9 +146,9 @@ module.exports = {
             next(error)
         }
     },
-    async getOtherManagers(req, res, next) {
+    async getManagers(req, res, next) {
         try {
-            return res.json(await UserService.getOtherManagers(req.body.email))
+            return res.json(await UserService.getManagers())
         } catch (error) {
             next(error)
         }
