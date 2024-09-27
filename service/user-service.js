@@ -7,7 +7,8 @@ const { sendMail } = require('../middleware/mailer');
 
 const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exception/api-error');
-const { removeManagerIn } = require('../controllers/user-controller');
+const _ = require('lodash');
+
 
 module.exports = {
     async getByEmail(email) {
@@ -203,11 +204,10 @@ module.exports = {
         return await UserModel.updateOne({ email: email }, { $pull: { managerIn: { type: managerIn.type, name: managerIn.name } } })
     },
     async addLocationToEmail(email, select, location) {
-        let managerIn = {
-            type: select,
-            name: location
-        }
-        return await UserModel.updateOne({ email: email }, { $push: { managerIn: managerIn } })
+        let user = await UserModel.findOne({ email: email })
+        user.managerIn.push({type:select,name:location})
+        user.managerIn = _.uniqBy(user.managerIn,"name")
+        return user.save()
     },
     async removeManagerIn(email) {
         return await UserModel.updateOne({ email: email }, { $set: { managerIn: [] } })
