@@ -1,7 +1,7 @@
 class UserDto {
-    email; firstname; lastname; phone; roles; posters; subscription; _id;contracts;
+    email; firstname; lastname; phone; roles; posters; subscription; _id;contracts;managerIn;
     constructor(user) {
-        const { email, firstname, lastname, phone, roles, posters, subscription, _id, contracts } = user
+        const { email, firstname, lastname, phone, roles, posters, subscription, _id, contracts,managerIn } = user
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -11,6 +11,7 @@ class UserDto {
         this.subscription = subscription;
         this._id = _id
         this.contracts = contracts
+        this.managerIn = managerIn
     }
 }
 
