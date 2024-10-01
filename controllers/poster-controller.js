@@ -54,6 +54,13 @@ module.exports = {
             next(error)
         }
     },
+    async getManagerPostersOnModeration(req, res, next) {
+        try {
+            return res.json(await PosterService.getManagerPostersOnModeration(req.query.status,req.query.user_id))
+        } catch (error) {
+            next(error)
+        }
+    },
     async create(req, res, next) {
         try {
             const posterId = await PosterService.createPoster(req.body)

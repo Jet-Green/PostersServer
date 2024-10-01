@@ -43,9 +43,9 @@ module.exports = {
             let poster = await PosterModel.findById(_id)
 
             if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
-        
-                    telegramService.sendPost(poster)
-              
+
+                telegramService.sendPost(poster)
+
             }
 
 
@@ -348,6 +348,15 @@ module.exports = {
         return PosterModel.find({ _id: { $in: postersIds } })
     },
     getPostersOnModeration(status) {
+        if (status == 'rejected') {
+            return PosterModel.find({ rejected: true, isDraft: false }).sort({ publicationDate: -1 })
+        } else {
+            return PosterModel.find({ isModerated: false, rejected: false, isDraft: false }).sort({ publicationDate: -1 })
+        }
+    },
+    getManagerPostersOnModeration(status,location_type,location_name) {
+        //get user
+        //$or [ loc:managerIn?]
         if (status == 'rejected') {
             return PosterModel.find({ rejected: true, isDraft: false }).sort({ publicationDate: -1 })
         } else {
