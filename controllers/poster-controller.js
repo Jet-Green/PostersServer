@@ -56,10 +56,10 @@ module.exports = {
     },
     async getManagerPostersOnModeration(req, res, next) {
         try {
-            let types=req.query.types.split(',')
-            let locations=req.query.locations.split(',')
-            console.log(types)
-            return res.json(await PosterService.getManagerPostersOnModeration(req.query.status,types,locations))
+            let cities=req.query.cities.split(',')
+            let areas=req.query.areas.split(',')
+            let regions=req.query.regions.split(',')
+            return res.json(await PosterService.getManagerPostersOnModeration(req.query.status,cities,areas,regions))
         } catch (error) {
             next(error)
         }

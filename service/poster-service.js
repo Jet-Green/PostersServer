@@ -354,51 +354,61 @@ module.exports = {
             return PosterModel.find({ isModerated: false, rejected: false, isDraft: false }).sort({ publicationDate: -1 })
         }
     },
-    async getManagerPostersOnModeration(status, types, locations) {
-        //get user
-        //$or [ loc:managerIn?]
-        // userModel.find({
-        //     $or: [
-        //         { "managerIn":{$elemMatch: { "type": "city_with_type", "name": req.body.poster.eventLocation.city_with_type } }},
-        //         { "managerIn":{$elemMatch: { "type": "area_with_type", "name": req.body.poster.eventLocation.area_with_type } }},
-        //         { "managerIn":{$elemMatch: { "type": "region_with_type", "name": req.body.poster.eventLocation.region_with_type } }},
-        //     ]
-        // }
-        // Define the locations to search for in the poster's location
-        // const posterLocationsToSearch = [
-        //     { city_with_type: 'city_with_type_a', region_with_type: 'region_with_type_a' },
-        //     { city_with_type: 'city_with_type_b', region_with_type: 'region_with_type_b' },
-        // ];
-        // const matchingPosters = await Poster.find({
-        //     eventLocation: {
-        //         $or: [
-        //             {$elemMatch:
-        //                  { types:ma ,
-        //                   city_with_type: { $eq: names } }
-        //             },
-        //         ],
-        //     },
-        // })
-        allManagerIns=[]
-        if (status == 'rejected') {
-            posters = PosterModel.find({ rejected: true, isDraft: false }).sort({ publicationDate: -1 })
-            for (poster in posters){
-                allManagerIns.push([poster.eventLocation.city_with_type,poster.eventLocation.area_with_type,poster.eventLocation.region_with_type])
+    async getManagerPostersOnModeration(status, cities, areas, regions) {
+      if (status == 'rejected') {
+        return await PosterModel.find({
+          rejected: true,
+          isDraft: false,
+          $or: [{
+              "eventLocation.city_with_type": {
+                $in: [cities]
+              }
+            },
+            {
+              "eventLocation.area_with_type": {
+                $in: [areas]
+              }
+            },
+            {
+              "eventLocation.region_with_type": {
+                $in: [regions]
+              }
             }
-            for (let i = 0; i < allManagerIns.length; i++){
-                for (type,location in types,locations){
-                    for (obj in managersIn){
-                        if (obj.type==type && obj.name==location){
-                            
-                        }
-                    }
-                }
-            }
-            
-        } else {
-            return PosterModel.find({ isModerated: false, rejected: false, isDraft: false }).sort({ publicationDate: -1 })
-        }
+          ]
+        }).sort({
+          publicationDate: -1
+        })
+
+      } else {
+        let poster = await PosterModel.find({
+          $or: [
+            {
+              "eventLocation.city_with_type": {
+                $in: cities
+              }
+            },
+            {
+              "eventLocation.area_with_type": {
+                $in: areas
+              }
+            },
+            {
+              "eventLocation.region_with_type": {
+                $in: regions
+              }
+            },
+          ],
+          isModerated: false,
+          rejected: false,
+          isDraft: false
+        })
+        .sort({
+          publicationDate: -1
+        })
+        return poster
+      }
     },
+
     async getPosters({ user_id, poster_status }) {
         let userFromDb = await UserModel.findById(user_id)
         let posters = []
