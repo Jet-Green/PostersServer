@@ -379,7 +379,8 @@ module.exports = {
           publicationDate: -1
         })
 
-      } else {
+      } 
+      else {
         let poster = await PosterModel.find({
           $or: [
             {
