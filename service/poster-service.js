@@ -361,17 +361,17 @@ module.exports = {
           isDraft: false,
           $or: [{
               "eventLocation.city_with_type": {
-                $in: [cities]
+                $in: cities
               }
             },
             {
               "eventLocation.area_with_type": {
-                $in: [areas]
+                $in: areas
               }
             },
             {
               "eventLocation.region_with_type": {
-                $in: [regions]
+                $in: regions
               }
             }
           ]
