@@ -642,7 +642,7 @@ module.exports = {
                 {name:item.eventLocation.city_with_type,coordinates:item.eventLocation?.coordinates} :
                 {name:item.eventLocation.settlement_with_type,coordinates:item.eventLocation?.coordinates})
             .flat()
-        let uniqTypes = _.uniq(typesArray).sort()
+        let uniqTypes = _.uniqBy(typesArray,'name').sort()
 
         return uniqTypes
     }
