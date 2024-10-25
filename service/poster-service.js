@@ -187,7 +187,7 @@ module.exports = {
         return filename
     },
     async findMany(filter) {
-        let { searchText, date, eventType, eventSubtype, eventLocation, page, posterType } = filter
+        let { searchText, date, eventType, eventSubtype, eventLocation, coordinates, radius, page, posterType } = filter
         const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -217,6 +217,22 @@ module.exports = {
                 }
             ]
         }
+
+        if (coordinates) {
+            query.$and.push({
+                includedLocations: {
+                    $near: {
+                        $geometry: {
+                            type: 'Point',
+                            coordinates: [Number(coordinates[0]), Number(coordinates[1])]
+                        },
+                        // in meters
+                        $maxDistance: radius
+                    }
+                }
+            })
+        }
+
         if (posterType) {
             query.$and.push({
                 posterType
@@ -620,9 +636,11 @@ module.exports = {
                     ]
                 }
             ]
-        }, { 'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1 })
+        }, { 'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1, 'coordinates':1,})
         let typesArray = activePosters
-            .map(item => item.eventLocation.city_with_type ? item.eventLocation.city_with_type : item.eventLocation.settlement_with_type)
+            .map(item => item.eventLocation.city_with_type ?
+                {name:item.eventLocation.city_with_type,coordinates:item.eventLocation?.coordinates} :
+                {name:item.eventLocation.settlement_with_type,coordinates:item.eventLocation?.coordinates})
             .flat()
         let uniqTypes = _.uniq(typesArray).sort()
 
