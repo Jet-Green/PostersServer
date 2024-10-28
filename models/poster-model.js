@@ -5,11 +5,13 @@ const PosterSchema = new Schema({
     title: { type: String },
     description: { type: String },
     image: { type: String },
-    eventLocation: { type: Object },
     site: { type: String },
     organizer: { type: String },
     phone: { type: String },
     email: { type: String },
+
+    eventLocation: { type: Object },
+    includedLocations:{ type: Object },
 
     eventIsOn: { type: String },
     date: { type: Array  },

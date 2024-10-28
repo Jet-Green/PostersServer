@@ -111,6 +111,7 @@ module.exports = {
         let region = eventLocation.region_with_type
         let area = eventLocation.area_with_type
         let capital_marker = eventLocation.capital_marker
+        let includedLocations = {type:"Point",coordinates:[parseFloat(eventLocation.geo_lat),parseFloat(eventLocation.geo_lon)]}
         let location = ''
         //! не удалять пробелы в строках
         if (region && capital_marker != 2 && region != city) {
@@ -136,6 +137,7 @@ module.exports = {
         poster.isDraft = false
         poster.rejected = false
         poster.isModerated = false
+        poster.includedLocations=includedLocations
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(user_id, {
@@ -188,6 +190,7 @@ module.exports = {
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventSubtype, eventLocation, coordinates, radius, page, posterType } = filter
+        // console.log(filter)
         const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -218,9 +221,9 @@ module.exports = {
             ]
         }
 
-        if (coordinates) {
+        if (radius!=0 && radius!="") {
             query.$and.push({
-                includedLocations: {
+                eventLocation: {
                     $near: {
                         $geometry: {
                             type: 'Point',
@@ -231,6 +234,9 @@ module.exports = {
                     }
                 }
             })
+        }
+        else if (eventLocation != "") {
+            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
 
         if (posterType) {
@@ -300,9 +306,7 @@ module.exports = {
                     }
                 })
         }
-        if (eventLocation != "") {
-            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
-        }
+
         if (searchText) {
             query.$and.push({
                 $or: [
