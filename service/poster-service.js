@@ -229,7 +229,7 @@ module.exports = {
                             coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
                         },
                         // in meters
-                        $maxDistance: radius
+                        $maxDistance: radius*1000
                     }
                 }
             })
