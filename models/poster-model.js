@@ -11,7 +11,6 @@ const PosterSchema = new Schema({
     email: { type: String },
 
     eventLocation: { type: Object },
-    includedLocations:{ type: Object },
 
     eventIsOn: { type: String },
     date: { type: Array  },

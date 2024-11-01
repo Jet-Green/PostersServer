@@ -111,7 +111,10 @@ module.exports = {
         let region = eventLocation.region_with_type
         let area = eventLocation.area_with_type
         let capital_marker = eventLocation.capital_marker
-        let includedLocations = {type:"Point",coordinates:[parseFloat(eventLocation.geo_lon),parseFloat(eventLocation.geo_lat)]}
+        eventLocation.type = "Point"
+        eventLocation.coordinates = [parseFloat(eventLocation.geo_lon), parseFloat(eventLocation.geo_lat)]
+        delete eventLocation.geo_lon
+        delete eventLocation.geo_lat
         let location = ''
         //! не удалять пробелы в строках
         if (region && capital_marker != 2 && region != city) {
@@ -137,7 +140,6 @@ module.exports = {
         poster.isDraft = false
         poster.rejected = false
         poster.isModerated = false
-        poster.includedLocations=includedLocations
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(user_id, {
@@ -189,7 +191,7 @@ module.exports = {
         return filename
     },
     async findMany(filter) {
-        let { searchText, date, eventType, eventSubtype, eventLocation, coordinates, radius, page, posterType } = filter
+        let { searchText, date, eventType, eventSubtype, coordinates, radius, page, posterType } = filter
         const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -219,24 +221,21 @@ module.exports = {
                 }
             ]
         }
-
-        if (radius!=0 && radius!="") {
-            query.$and.push({
-                includedLocations: {
-                    $near: {
-                        $geometry: {
-                            type: 'Point',
-                            coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
-                        },
-                        // in meters
-                        $maxDistance: radius*1000
-                    }
+        query.$and.push({
+            eventLocation: {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
+                    },
+                    // in meters
+                    $maxDistance: radius * 1000
                 }
-            })
-        }
-        else if (eventLocation != "") {
-            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
-        }
+            }
+        })
+        // else if (eventLocation != "") {
+        //     query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
+        // }
 
         if (posterType) {
             query.$and.push({
@@ -374,59 +373,59 @@ module.exports = {
         }
     },
     async getManagerPostersOnModeration(status, cities, areas, regions) {
-      if (status == 'rejected') {
-        return await PosterModel.find({
-          rejected: true,
-          isDraft: false,
-          $or: [{
-              "eventLocation.city_with_type": {
-                $in: cities
-              }
-            },
-            {
-              "eventLocation.area_with_type": {
-                $in: areas
-              }
-            },
-            {
-              "eventLocation.region_with_type": {
-                $in: regions
-              }
-            }
-          ]
-        }).sort({
-          publicationDate: -1
-        })
+        if (status == 'rejected') {
+            return await PosterModel.find({
+                rejected: true,
+                isDraft: false,
+                $or: [{
+                    "eventLocation.city_with_type": {
+                        $in: cities
+                    }
+                },
+                {
+                    "eventLocation.area_with_type": {
+                        $in: areas
+                    }
+                },
+                {
+                    "eventLocation.region_with_type": {
+                        $in: regions
+                    }
+                }
+                ]
+            }).sort({
+                publicationDate: -1
+            })
 
-      } 
-      else {
-        let poster = await PosterModel.find({
-          $or: [
-            {
-              "eventLocation.city_with_type": {
-                $in: cities
-              }
-            },
-            {
-              "eventLocation.area_with_type": {
-                $in: areas
-              }
-            },
-            {
-              "eventLocation.region_with_type": {
-                $in: regions
-              }
-            },
-          ],
-          isModerated: false,
-          rejected: false,
-          isDraft: false
-        })
-        .sort({
-          publicationDate: -1
-        })
-        return poster
-      }
+        }
+        else {
+            let poster = await PosterModel.find({
+                $or: [
+                    {
+                        "eventLocation.city_with_type": {
+                            $in: cities
+                        }
+                    },
+                    {
+                        "eventLocation.area_with_type": {
+                            $in: areas
+                        }
+                    },
+                    {
+                        "eventLocation.region_with_type": {
+                            $in: regions
+                        }
+                    },
+                ],
+                isModerated: false,
+                rejected: false,
+                isDraft: false
+            })
+                .sort({
+                    publicationDate: -1
+                })
+            return poster
+        }
     },
 
     async getPosters({ user_id, poster_status }) {
@@ -639,13 +638,13 @@ module.exports = {
                     ]
                 }
             ]
-        }, { 'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1, 'includedLocations.coordinates':1,})
+        }, { 'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1, 'eventLocation.coordinates': 1, })
         let typesArray = activePosters
             .map(item => item.eventLocation.city_with_type ?
-                {name:item.eventLocation.city_with_type,coordinates:item.includedLocations?.coordinates} :
-                {name:item.eventLocation.settlement_with_type,coordinates:item.includedLocations?.coordinates})
+                { name: item.eventLocation.city_with_type, coordinates: item.eventLocation?.coordinates } :
+                { name: item.eventLocation.settlement_with_type, coordinates: item.eventLocation?.coordinates })
             .flat()
-        let uniqTypes = _.uniqBy(typesArray,'name').sort()
+        let uniqTypes = _.uniqBy(typesArray, 'name').sort()
 
         return uniqTypes
     }
