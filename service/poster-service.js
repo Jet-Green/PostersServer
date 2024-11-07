@@ -192,6 +192,7 @@ module.exports = {
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventLocation, eventSubtype, coordinates, radius, page, posterType } = filter
+        console.log(filter)
         const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -223,18 +224,20 @@ module.exports = {
         }
         if (eventLocation != "") {
             query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
-            query.$and.push({
-                eventLocation: {
-                    $near: {
-                        $geometry: {
-                            type: 'Point',
-                            coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
-                        },
-                        // in meters
-                        $maxDistance: Number(radius) * 1000
+            if (radius!=0){
+                query.$and.push({
+                    eventLocation: {
+                        $near: {
+                            $geometry: {
+                                type: 'Point',
+                                coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
+                            },
+                            // in meters
+                            $maxDistance: Number(radius) * 1000
+                        }
                     }
-                }
-            })
+                })
+            }
         }
 
         if (posterType) {
@@ -638,11 +641,11 @@ module.exports = {
                     ]
                 }
             ]
-        }, { 'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1, 'eventLocation.coordinates': 1, })
+        }, { 'eventLocation.name': 1,'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1, 'eventLocation.coordinates': 1, })
         let typesArray = activePosters
             .map(item => item.eventLocation.city_with_type ?
-                { name: item.eventLocation.city_with_type, coordinates: item.eventLocation?.coordinates } :
-                { name: item.eventLocation.settlement_with_type, coordinates: item.eventLocation?.coordinates })
+                { name: item.eventLocation.city_with_type, coordinates: item.eventLocation?.coordinates, fullLocation:item.eventLocation?.name } :
+                { name: item.eventLocation.settlement_with_type, coordinates: item.eventLocation?.coordinates, fullLocation:item.eventLocation?.name })
             .flat()
         let uniqTypes = _.uniqBy(typesArray, 'name').sort()
 
