@@ -192,7 +192,7 @@ module.exports = {
     },
     async findMany(filter) {
         let { searchText, date, eventType, eventLocation, eventSubtype, coordinates, radius, page, posterType } = filter
-        console.log(filter)
+        // console.log(filter)
         const limit = 100;
         const sitePage = page;
         const skip = (sitePage - 1) * limit;
@@ -222,22 +222,22 @@ module.exports = {
                 }
             ]
         }
-        if (eventLocation != "") {
-            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
-            if (radius!=0){
-                query.$and.push({
-                    eventLocation: {
-                        $near: {
-                            $geometry: {
-                                type: 'Point',
-                                coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
-                            },
-                            // in meters
-                            $maxDistance: Number(radius) * 1000
-                        }
+        if (radius!=0){
+            query.$and.push({
+                eventLocation: {
+                    $near: {
+                        $geometry: {
+                            type: 'Point',
+                            coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
+                        },
+                        // in meters
+                        $maxDistance: Number(radius) * 1000
                     }
-                })
-            }
+                }
+            })
+        }
+        else if (eventLocation != "") {
+            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
 
         if (posterType) {
