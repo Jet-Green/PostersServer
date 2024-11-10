@@ -191,6 +191,7 @@ module.exports = {
         return filename
     },
     async findMany(filter) {
+        console.log(filter)
         let { searchText, date, eventType, eventLocation, eventSubtype, coordinates, radius, page, posterType } = filter
         // console.log(filter)
         const limit = 100;
@@ -591,37 +592,69 @@ module.exports = {
 
         return posterFromDb.save()
     },
-    async getActiveCategories(location) {
-        let query = {
+
+
+    async getActiveCategories(location, radius, coordinates) {
+        const currentDate = new Date().setHours(0, 0, 0, 0);
+        const queryBase = {
             $and: [
                 { isHidden: false },
                 { isModerated: true },
                 { isDraft: false },
-                { rejected: false, },
+                { rejected: false },
                 { endDate: { $gt: Date.now() } },
                 {
                     $or: [
                         { date: { $eq: [] } },
-                        {
-                            date: {
-                                $gt: new Date().setHours(0, 0, 0, 0),
-                            }
-                        }
+                        { date: { $gt: currentDate } }
                     ]
                 }
             ]
+        };
+    
+        let locationResults = [];
+        let coordinatesResults = [];
+        let baseResults = [];
+    
+        // Поиск по координатам
+        //MongoDB накладывает ограничения на использование $near в сочетании с другими операторами в одном $or или $and запросе
+        if (coordinates.length) {
+            const coordinatesQuery = {
+                ...queryBase,
+                eventLocation: {
+                    $near: {
+                        $geometry: {
+                            type: 'Point',
+                            coordinates: coordinates
+                        },
+                        $maxDistance: radius * 1000  // Радиус в метрах
+                    }
+                }
+            };
+            coordinatesResults = await PosterModel.find(coordinatesQuery);
         }
-        if (location != "") {
-            query.$and.push({ 'eventLocation.name': { $regex: location, $options: 'i' } })
+    
+        // Поиск по названию локации
+        if (location) {
+            const locationQuery = {
+                ...queryBase,
+                'eventLocation.name': { $regex: location, $options: 'i' }
+            };
+            locationResults = await PosterModel.find(locationQuery);
+        } else {
+            baseResults = await PosterModel.find(queryBase);
         }
-        let activePosters = await PosterModel.find(query)
-        let typesArray = activePosters
-            .map(item => item.eventType)
-            .flat()
-        let uniqTypes = _.uniq(typesArray)
-
-        return uniqTypes
+    
+        // Объединение результатов и удаление дубликатов
+        const activePosters = [...coordinatesResults, ...locationResults, ... baseResults];
+        const uniquePosters = _.uniqBy(activePosters, '_id'); // Убираем дубликаты по уникальному _id
+    
+        const typesArray = uniquePosters.map(item => item.eventType).flat();
+        const uniqTypes = _.uniq(typesArray);
+    
+        return uniqTypes;
     },
+    
     async getActiveCities() {
         let activePosters = await PosterModel.find({
             $and: [

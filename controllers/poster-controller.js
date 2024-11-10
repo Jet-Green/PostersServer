@@ -183,7 +183,7 @@ module.exports = {
     },
     async getActiveCategories(req, res, next) {
         try {
-            return res.json(await PosterService.getActiveCategories(req.query.location))
+            return res.json(await PosterService.getActiveCategories(req.body.location, req.body.radius, req.body.coordinates))
         } catch (error) {
             next(error)
         }
