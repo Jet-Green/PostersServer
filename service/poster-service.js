@@ -191,7 +191,6 @@ module.exports = {
         return filename
     },
     async findMany(filter) {
-        console.log(filter)
         let { searchText, date, eventType, eventLocation, eventSubtype, coordinates, radius, page, posterType } = filter
         // console.log(filter)
         const limit = 100;
@@ -222,23 +221,6 @@ module.exports = {
                     }
                 }
             ]
-        }
-        if (radius!=0){
-            query.$and.push({
-                eventLocation: {
-                    $near: {
-                        $geometry: {
-                            type: 'Point',
-                            coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
-                        },
-                        // in meters
-                        $maxDistance: Number(radius) * 1000
-                    }
-                }
-            })
-        }
-        else if (eventLocation != "") {
-            query.$and.push({ 'eventLocation.name': { $regex: eventLocation, $options: 'i' } })
         }
 
         if (posterType) {
@@ -320,11 +302,28 @@ module.exports = {
                 ]
             })
         }
-
-        const cursor = PosterModel.find(query, null).sort({ publicationDate: -1, date: -1 }).skip(skip).limit(limit).cursor();
+        let locationQuery={
+            ...query,
+            eventLocation: {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [parseFloat(coordinates[0]), parseFloat(coordinates[1])]
+                    },
+                    // in meters
+                    $maxDistance: Number(radius) * 1000
+                }
+            }
+        }
+        let radiusQuery={
+            ...query,
+            'eventLocation.name': { $regex: eventLocation, $options: 'i'}
+        }
+        const cursorBase = PosterModel.find(query, null).sort({ publicationDate: -1, date: -1 }).skip(skip).limit(limit).cursor();
 
         const results = [];
-        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
+        for (let doc = await cursorBase.next(); doc != null; doc = await cursorBase.next()) {
+
             results.push(doc);
         }
 
@@ -675,7 +674,7 @@ module.exports = {
                 }
             ]
         }, { 'eventLocation.name': 1,'eventLocation.city_with_type': 1, 'eventLocation.settlement_with_type': 1, 'eventLocation.coordinates': 1, })
-        // .split(', ').filter((item)=>(item[0]!='у' && item[1]!='л' && item[2]!=' ') && (item[0]!='д' && item[1]!=' ')).join(', ')
+        //.split(', ').filter((item)=>(item[0]!='у' && item[1]!='л' || item[2]!=' ') && (item[0]!='д' || item[1]!=' ')).join(', ')
         let typesArray = activePosters
             .map(item => item.eventLocation.city_with_type ?
                 { name: item.eventLocation.city_with_type, coordinates: item.eventLocation?.coordinates, fullLocation:item.eventLocation?.name.split(', ').filter((item)=>(item[0]!='у' && item[1]!='л' || item[2]!=' ') && (item[0]!='д' || item[1]!=' ')).join(', ')} :
