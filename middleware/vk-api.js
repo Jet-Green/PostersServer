@@ -13,69 +13,116 @@ const { VK, Upload, API } = require('vk-io');
 
 module.exports = process.env.NODE_ENV == 'production' ? {
 
+    // async postInGroup(message, poster, group) {
+    //     // console.log(message,poster,group)
+    //     try {
+    //         if (group == 'Glazov') {
+    //             console.log('GL')
+    //             const api = new API({
+    //                 token: process.env.VK_ACCESS_TOKEN_GLAZOV
+    //             });
+    //             const vk = new VK({
+    //                 token: process.env.VK_ACCESS_TOKEN_GLAZOV
+    //             });
+    //             const upload = new Upload({
+    //                 api
+    //             });
+    //             const image = await upload.wallPhoto({
+    //                 source: {
+    //                     value: poster.image
+    //                 }
+    //             })
+    //             const response = await vk.api.wall.post({
+    //                 message: `${poster.eventType.join('|')}  ${poster.title}`,
+    //                 owner_id: -222755810,
+    //                 from_group: 1,
+    //                 attachments: `${image}, ${message}`
+    //             });
+
+    //             return response
+    //         }
+    //         else if(group=='Izhevsk'){
+    //             console.log('Izh')
+    //             const api = new API({
+    //                 token: process.env.VK_ACCESS_TOKEN_IZH
+    //             });
+    //             const vk = new VK({
+    //                 token: process.env.VK_ACCESS_TOKEN_IZH
+    //             });
+    //             const upload = new Upload({
+    //                 api
+    //             });
+    //             const image = await upload.wallPhoto({
+    //                 source: {
+    //                     value: poster.image
+    //                 }
+    //             })
+    //             const response = await vk.api.wall.post({
+    //                 message: `${poster.eventType.join('|')}  ${poster.title}`,
+    //                 owner_id: -228385957,
+    //                 // scope:wall,
+    //                 from_group: 1,
+    //                 attachments: `${image}, ${message}`
+    //             });
+
+    //             return response
+    //         }
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+
+
+    //     // const response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&attachments=attachments&message=${poster.eventType.join('|')} ${poster.title}&owner_id=-222755810&from_group=1`)
+
+    //     // return response
+    // }
     async postInGroup(message, poster, group) {
-        // console.log(message,poster,group)
         try {
-            if (group == 'Glazov') {
-                console.log('GL')
-                const api = new API({
+            let api, vk, upload, ownerId;
+    
+            if (group === 'Glazov') {
+                console.log('GL');
+                api = new API({
                     token: process.env.VK_ACCESS_TOKEN_GLAZOV
                 });
-                const vk = new VK({
+                vk = new VK({
                     token: process.env.VK_ACCESS_TOKEN_GLAZOV
                 });
-                const upload = new Upload({
-                    api
-                });
-                const image = await upload.wallPhoto({
-                    source: {
-                        value: poster.image
-                    }
-                })
-                const response = await vk.api.wall.post({
-                    message: `${poster.eventType.join('|')}  ${poster.title}`,
-                    owner_id: -222755810,
-                    from_group: 1,
-                    attachments: `${image}, ${message}`
-                });
-
-                return response
-            }
-            else if(group=='Izhevsk'){
-                console.log('Izh')
-                const api = new API({
+                ownerId = -222755810;
+            } else if (group === 'Izhevsk') {
+                console.log('Izh');
+                api = new API({
                     token: process.env.VK_ACCESS_TOKEN_IZH
                 });
-                const vk = new VK({
+                vk = new VK({
                     token: process.env.VK_ACCESS_TOKEN_IZH
                 });
-                const upload = new Upload({
-                    api
-                });
-                const image = await upload.wallPhoto({
-                    source: {
-                        value: poster.image
-                    }
-                })
-                const response = await vk.api.wall.post({
-                    message: `${poster.eventType.join('|')}  ${poster.title}`,
-                    owner_id: -228385957,
-                    scope:wall,
-                    from_group: 1,
-                    attachments: `${image}, ${message}`
-                });
-
-                return response
+                ownerId = -228385957;
+            } else {
+                throw new Error('Unknown group');
             }
+    
+            upload = new Upload({ api });
+    
+            const image = await upload.wallPhoto({
+                source: {
+                    value: poster.image
+                }
+            });
+    
+            const response = await vk.api.wall.post({
+                message: `${poster.eventType.join('|')} ${poster.title}`,
+                owner_id: ownerId,
+                from_group: 1,
+                attachments: `${image}, ${message}`
+            });
+    
+            return response;
         } catch (error) {
-            console.log(error)
+            console.error('Error posting in group:', error);
         }
-
-
-        // const response = await axios.post(`https://api.vk.com/method/wall.post?access_token=${process.env.VK_ACCESS_TOKEN}&v=5.131&attachments=attachments&message=${poster.eventType.join('|')} ${poster.title}&owner_id=-222755810&from_group=1`)
-
-        // return response
     }
+    
 } : { async postInGroup(message) { } }
 
 // `https://oauth.vk.com/authorize?client_id=-51783056&scope=manage&redirect_uri=http://localhost:3031&response_type=token`
