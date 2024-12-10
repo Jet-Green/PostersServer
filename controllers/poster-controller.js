@@ -25,14 +25,14 @@ module.exports = {
                     }
                 }
 
-                if (poster.eventLocation.name.includes("г Ижевск")) {
-                    try {
-                        await vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster, 'Izhevsk');
-                    } catch (vkError) {
-                        console.error("Error posting in VK group:", vkError);
-                        // Handle the error or log it, but don't stop execution
-                    }
-                }
+                // if (poster.eventLocation.name.includes("г Ижевск")) {
+                //     try {
+                //         await vkapi.postInGroup(`${process.env.CLIENT_URL}/post?_id=${req.query._id}`, poster, 'Izhevsk');
+                //     } catch (vkError) {
+                //         console.error("Error posting in VK group:", vkError);
+                //         // Handle the error or log it, but don't stop execution
+                //     }
+                // }
             }
 
             // Regardless of the vkapi result, proceed to moderate the poster
