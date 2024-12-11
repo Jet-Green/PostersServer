@@ -19,7 +19,6 @@ module.exports = process.env.NODE_ENV == 'production' ? {
             let api, vk, upload, ownerId;
     
             if (group === 'Glazov') {
-                console.log('GL');
                 api = new API({
                     token: process.env.VK_ACCESS_TOKEN_GLAZOV
                 });
@@ -27,18 +26,19 @@ module.exports = process.env.NODE_ENV == 'production' ? {
                     token: process.env.VK_ACCESS_TOKEN_GLAZOV
                 });
                 ownerId = -222755810;
-            } else if (group === 'Izhevsk') {
-                console.log('Izh');
-                api = new API({
-                    token: process.env.VK_ACCESS_TOKEN_IZH
-                });
-                vk = new VK({
-                    token: process.env.VK_ACCESS_TOKEN_IZH
-                });
-                ownerId = -228385957;
-            } else {
-                throw new Error('Unknown group');
             }
+            // else if (group === 'Izhevsk') {
+            //     console.log('Izh');
+            //     api = new API({
+            //         token: process.env.VK_ACCESS_TOKEN_IZH
+            //     });
+            //     vk = new VK({
+            //         token: process.env.VK_ACCESS_TOKEN_IZH
+            //     });
+            //     ownerId = -228385957;
+            // } else {
+            //     throw new Error('Unknown group');
+            // }
     
             upload = new Upload({ api });
     

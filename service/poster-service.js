@@ -3,7 +3,7 @@ const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
-// const telegramService = require('./telegram-service.js');
+const telegramService = require('./telegram-service.js');
 const vkapi = require('../middleware/vk-api.js')
 const _ = require('lodash')
 
@@ -65,7 +65,7 @@ module.exports = {
 
             if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
 
-                // telegramService.sendPost(poster)
+                telegramService.sendPost(poster)
 
             }
 
@@ -1016,16 +1016,17 @@ module.exports = {
             'eventLocation.settlement_with_type': 1,
             'eventLocation.coordinates': 1,
         })
-        //.split(', ').filter((item)=>(item[0]!='у' && item[1]!='л' || item[2]!=' ') && (item[0]!='д' || item[1]!=' ')).join(', ')
+        // filter((item) => (item[0] != 'у' && item[1] != 'л' && item[2] !=' ') && (item[0] != 'д' && item[1] != ' ') && (item[0] != 'з' && item[1] != 'о' && item[2] != 'н' && item[4] != 'а') && (item[0] != 'с' && item[1] != 'т' && item[2] != 'р' && item[3] != ' ')).join(', ')
+        // .split(', ').filter((item) => (item.slice(0,3)!='ул ') && (item.slice(0,2)!='д ') && (item.slice(0,5)!='зона ') && (item.slice(0,4)!='стр ') && (item.slice(0,3)!='зд ')).join(', ')
         let typesArray = activePosters
             .map(item => item.eventLocation.city_with_type ? {
                 name: item.eventLocation.city_with_type,
                 coordinates: item.eventLocation?.coordinates,
-                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item[0] != 'у' && item[1] != 'л' || item[2] != ' ') && (item[0] != 'д' || item[1] != ' ')).join(', ')
+                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item.slice(-5)!='шоссе') && (item.slice(0,3)!='ул ') && (item.slice(0,2)!='д ') && (item.slice(0,5)!='зона ') && (item.slice(0,4)!='стр ') && (item.slice(0,3)!='зд ')).join(', ')
             } : {
                 name: item.eventLocation.settlement_with_type,
                 coordinates: item.eventLocation?.coordinates,
-                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item[0] != 'у' && item[1] != 'л' || item[2] != ' ') && (item[0] != 'д' || item[1] != ' ')).join(', ')
+                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item.slice(-5)!='шоссе') &&(item.slice(0,3)!='ул ') && (item.slice(0,2)!='д ') && (item.slice(0,5)!='зона ') && (item.slice(0,4)!='стр ') && (item.slice(0,3)!='зд ')).join(', ')
             })
             .flat()
         let uniqTypes = _.uniqBy(typesArray, 'name').sort()
