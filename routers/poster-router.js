@@ -29,6 +29,7 @@ router.get('/get-by-id', PosterController.getById)
 router.post('/get-user-posters',authMiddleware, PosterController.getUserPosters)
 router.post('/update',authMiddleware, PosterController.updatePoster)
 router.get('/clear',authMiddleware, PosterController.deleteMany)
+router.get('/get-ids',PosterController.getIds)
 
 router.post('/edit',authMiddleware, PosterController.editPoster)
 

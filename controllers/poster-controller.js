@@ -190,6 +190,13 @@ module.exports = {
             next(error)
         }
     },
+    async getIds(req, res, next) {
+        try {
+            return res.json(await PosterService.getIds())
+        } catch (error) {
+            next(error)
+        }
+    },
     async getActiveCategories(req, res, next) {
         try {
             return res.json(await PosterService.getActiveCategories(req.body.location, req.body.radius, req.body.coordinates))
