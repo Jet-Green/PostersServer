@@ -28,7 +28,6 @@ module.exports = process.env.NODE_ENV == 'development' ? {
                 ownerId = -222755810;
             }
             else if (group === 'Izhevsk') {
-                console.log('Izh');
                 api = new API({
                     token: process.env.VK_ACCESS_TOKEN_IZH
                 });
@@ -47,9 +46,6 @@ module.exports = process.env.NODE_ENV == 'development' ? {
                     value: poster.image
                 }
             });
-            // console.log(image)
-            // const image = await upload.
-            //457242453
 
             // const response = await vk.api.wall.post({
             //     message: `${poster.eventType.join('|')} ${poster.title}`,
@@ -58,11 +54,10 @@ module.exports = process.env.NODE_ENV == 'development' ? {
             //     attachments: `${image}, ${message}`
             // });
             const response = await vk.api.wall.post({
-                message: `${message} ${poster.eventType.join('|')} ${poster.title}`,
+                message: `${poster.eventType.join('|')} ${poster.title}`,
                 owner_id: ownerId,
                 from_group: 1,
-                attachments: `photo${image.ownerId}_${image.id}`
-                // message:`${message}`
+                attachments: `photo${image.ownerId}_${image.id},${message}`
             });
     
             return response;
