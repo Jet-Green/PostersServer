@@ -3,7 +3,7 @@ const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
-// const telegramService = require('./telegram-service.js');
+const telegramService = require('./telegram-service.js');
 const vkapi = require('../middleware/vk-api.js')
 const _ = require('lodash')
 
@@ -65,7 +65,7 @@ module.exports = {
 
             if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {
 
-                // telegramService.sendPost(poster)
+                telegramService.sendPost(poster)
 
             }
 
