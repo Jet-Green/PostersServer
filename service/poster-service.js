@@ -260,7 +260,7 @@ module.exports = {
             posterType
         } = filter;
         // console.log(filter);
-        const limit = 100;
+        const limit = 60;
         const sitePage = page || 1; // Default to page 1 if not provided
         const skip = (sitePage - 1) * limit;
 
