@@ -13,7 +13,7 @@ module.exports = {
     },
     async moderatePoster(req, res, next) {
         try {
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'production') {
                 let poster = await PosterService.getById(req.query._id);
                 // console.log('poster',poster)
                 if (poster.eventLocation.name.includes("Удмуртская Респ, г Глазов")) {

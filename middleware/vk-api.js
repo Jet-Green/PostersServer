@@ -11,7 +11,7 @@ const { VK, Upload, API } = require('vk-io');
 //     api
 // });production
 
-module.exports = process.env.NODE_ENV == 'development' ? {
+module.exports = process.env.NODE_ENV == 'production' ? {
 
     
     async postInGroup(message, poster, group) {
