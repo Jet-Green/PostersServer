@@ -578,6 +578,51 @@ module.exports = {
     deleteMany() {
         return PosterModel.deleteMany({})
     },
+    async getIds() {
+        let data = await PosterModel.find({
+            $and: [{
+                    isHidden: false
+                },
+                {
+                    isModerated: true
+                },
+                {
+                    isDraft: false
+                },
+                {
+                    rejected: false
+                },
+                {
+                    endDate: {
+                        $gte: new Date().setHours(0, 0, 0, 0)
+                    }
+                }
+            ],
+            $or: [{
+                    endEventDate: {
+                        $gte: new Date().setHours(23, 59, 59, 99)
+                    }
+                },
+                {
+                    endEventDate: {
+                        $exists: false
+                    }
+                },
+                {
+                    endEventDate: {
+                        $eq: null
+                    }
+                }
+            ]
+        })
+        data = data.map(item => ({
+            loc: `/post?_id=${item._id}`, // Replace with your dynamic route structure
+            images:[
+                {loc: item.image}
+            ]
+        }));
+        return data
+    },
     getUserPosters(postersIds) {
         return PosterModel.find({
             _id: {
@@ -1022,11 +1067,11 @@ module.exports = {
             .map(item => item.eventLocation.city_with_type ? {
                 name: item.eventLocation.city_with_type,
                 coordinates: item.eventLocation?.coordinates,
-                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item.slice(-5)!='шоссе') && (item.slice(0,3)!='ул ') && (item.slice(0,2)!='д ') && (item.slice(0,5)!='зона ') && (item.slice(0,4)!='стр ') && (item.slice(0,3)!='зд ')).join(', ')
+                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item.slice(-5) != 'шоссе') && (item.slice(0, 3) != 'ул ') && (item.slice(0, 2) != 'д ') && (item.slice(0, 5) != 'зона ') && (item.slice(0, 4) != 'стр ') && (item.slice(0, 3) != 'зд ')).join(', ')
             } : {
                 name: item.eventLocation.settlement_with_type,
                 coordinates: item.eventLocation?.coordinates,
-                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item.slice(-5)!='шоссе') &&(item.slice(0,3)!='ул ') && (item.slice(0,2)!='д ') && (item.slice(0,5)!='зона ') && (item.slice(0,4)!='стр ') && (item.slice(0,3)!='зд ')).join(', ')
+                fullLocation: item.eventLocation?.name.split(', ').filter((item) => (item.slice(-5) != 'шоссе') && (item.slice(0, 3) != 'ул ') && (item.slice(0, 2) != 'д ') && (item.slice(0, 5) != 'зона ') && (item.slice(0, 4) != 'стр ') && (item.slice(0, 3) != 'зд ')).join(', ')
             })
             .flat()
         let uniqTypes = _.uniqBy(typesArray, 'name').sort()
