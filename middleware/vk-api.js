@@ -9,9 +9,9 @@ const { VK, Upload, API } = require('vk-io');
 // });
 // const upload = new Upload({
 //     api
-// });
+// });production
 
-module.exports = process.env.NODE_ENV == 'production' ? {
+module.exports = process.env.NODE_ENV == 'development' ? {
 
     
     async postInGroup(message, poster, group) {
@@ -27,18 +27,18 @@ module.exports = process.env.NODE_ENV == 'production' ? {
                 });
                 ownerId = -222755810;
             }
-            // else if (group === 'Izhevsk') {
-            //     console.log('Izh');
-            //     api = new API({
-            //         token: process.env.VK_ACCESS_TOKEN_IZH
-            //     });
-            //     vk = new VK({
-            //         token: process.env.VK_ACCESS_TOKEN_IZH
-            //     });
-            //     ownerId = -228385957;
-            // } else {
-            //     throw new Error('Unknown group');
-            // }
+            else if (group === 'Izhevsk') {
+                console.log('Izh');
+                api = new API({
+                    token: process.env.VK_ACCESS_TOKEN_IZH
+                });
+                vk = new VK({
+                    token: process.env.VK_ACCESS_TOKEN_IZH
+                });
+                ownerId = -228385957;
+            } else {
+                throw new Error('Unknown group');
+            }
     
             upload = new Upload({ api });
     
@@ -47,12 +47,22 @@ module.exports = process.env.NODE_ENV == 'production' ? {
                     value: poster.image
                 }
             });
-    
+            // console.log(image)
+            // const image = await upload.
+            //457242453
+
+            // const response = await vk.api.wall.post({
+            //     message: `${poster.eventType.join('|')} ${poster.title}`,
+            //     owner_id: ownerId,
+            //     from_group: 1,
+            //     attachments: `${image}, ${message}`
+            // });
             const response = await vk.api.wall.post({
-                message: `${poster.eventType.join('|')} ${poster.title}`,
+                message: `${message} ${poster.eventType.join('|')} ${poster.title}`,
                 owner_id: ownerId,
                 from_group: 1,
-                attachments: `${image}, ${message}`
+                attachments: `photo${image.ownerId}_${image.id}`
+                // message:`${message}`
             });
     
             return response;
@@ -61,7 +71,7 @@ module.exports = process.env.NODE_ENV == 'production' ? {
         }
     }
     
-} : { async postInGroup(message) { } }
+} : { postInGroup(message, poster, group){} }
 
 // `https://oauth.vk.com/authorize?client_id=-51783056&scope=manage&redirect_uri=http://localhost:3031&response_type=token`
 // https://oauth.vk.com/access_token?client_id=51783056&client_secret=Hn2RIxtq3uzc3Vl0KAgI&redirect_uri=http://localhost:3031&code=0a6421a65a4a8219e6
