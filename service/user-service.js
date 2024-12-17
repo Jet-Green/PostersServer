@@ -113,7 +113,7 @@ module.exports = {
         const hashPassword = await bcrypt.hash(password, 3)
         // const adminUserRole = await RoleModel.findOne({ value: 'admin' })
         const defaultUserRole = await RoleModel.findOne({ value: 'user' })
-        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone: this.processPhoneNumber(phone), roles: [defaultUserRole], })
+        const user = await UserModel.create({ email, password: hashPassword, firstname, lastname, phone: this.processPhoneNumber(phone), roles: [defaultUserRole]})
 
         const tokens = TokenService.generateTokens({ email, hashPassword, _id: user._id })
         await TokenService.saveToken(user._id, tokens.refreshToken);
@@ -205,6 +205,9 @@ module.exports = {
     },
     async addLocationToEmail(email, select, location) {
         let user = await UserModel.findOne({ email: email })
+        if (user.managerIn==undefined){
+            user.managerIn=[]
+        }
         user.managerIn.push({type:select,name:location})
         user.managerIn = _.uniqBy(user.managerIn,"name")
         return user.save()

@@ -97,6 +97,7 @@ module.exports = {
                     </body>
                     </html>`, emails = [...usersToMail, 'grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
             }
+            // 'grachevrv@ya.ru', 'grishadzyin@gmail.com'
 
             return res.json({ _id: posterId, message: 'Создано' })
         } catch (error) {
