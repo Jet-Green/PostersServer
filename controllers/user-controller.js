@@ -139,9 +139,16 @@ module.exports = {
             next(error)
         }
     },
-    async removeManagerIn(req, res, next) {
+    async removeManager(req, res, next) {
         try {
-            return res.json(await UserService.removeManagerIn(req.body.email))
+            return res.json(await UserService.removeManager(req.body.email))
+        } catch (error) {
+            next(error)
+        }
+    },
+    async removeManagerInLocations(req, res, next) {
+        try {
+            return res.json(await UserService.removeManagerInLocations(req.body.email))
         } catch (error) {
             next(error)
         }

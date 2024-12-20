@@ -212,8 +212,11 @@ module.exports = {
         user.managerIn = _.uniqBy(user.managerIn,"name")
         return user.save()
     },
-    async removeManagerIn(email) {
+    async removeManagerInLocations(email) {
         return await UserModel.updateOne({ email: email }, { $set: { managerIn: [] } })
+    },
+    async removeManager(email) {
+        return await UserModel.updateOne({ email: email }, { $unset: { managerIn: "" } })
     },
     async getManagers() {
         try {
