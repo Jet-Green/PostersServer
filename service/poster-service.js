@@ -924,6 +924,14 @@ module.exports = {
         hotfix
     }, _id) {
         let posterFromDb = await PosterModel.findById(_id)
+        // console.log(poster,poster?.eventLocation)
+        if (poster?.eventLocation?.geo_lon) {
+            poster.eventLocation.type = "Point"
+            poster.eventLocation.coordinates = [parseFloat(poster.eventLocation.geo_lon), parseFloat(poster.eventLocation.geo_lat)]
+            delete poster.eventLocation.geo_lon
+            delete poster.eventLocation.geo_lat
+        }
+        // console.log(poster)
 
         Object.assign(posterFromDb, poster)
 
