@@ -80,7 +80,12 @@ module.exports = {
                 new: true
             })
         } else {
-            return false
+            let user = await UserModel.findById(userId)
+            return {
+                userId,
+                email: user.email,
+                message: 'У пользователя нет оплаченных афиш'
+            };
         }
 
     },
@@ -267,38 +272,38 @@ module.exports = {
         // Start with the base query for filtering events
         let query = {
             $and: [{
-                    isHidden: false
-                },
-                {
-                    isModerated: true
-                },
-                {
-                    isDraft: false
-                },
-                {
-                    rejected: false
-                },
-                {
-                    endDate: {
-                        $gte: new Date().setHours(0, 0, 0, 0)
-                    }
+                isHidden: false
+            },
+            {
+                isModerated: true
+            },
+            {
+                isDraft: false
+            },
+            {
+                rejected: false
+            },
+            {
+                endDate: {
+                    $gte: new Date().setHours(0, 0, 0, 0)
                 }
+            }
             ],
             $or: [{
-                    endEventDate: {
-                        $gte: new Date().setHours(23, 59, 59, 99)
-                    }
-                },
-                {
-                    endEventDate: {
-                        $exists: false
-                    }
-                },
-                {
-                    endEventDate: {
-                        $eq: null
-                    }
+                endEventDate: {
+                    $gte: new Date().setHours(23, 59, 59, 99)
                 }
+            },
+            {
+                endEventDate: {
+                    $exists: false
+                }
+            },
+            {
+                endEventDate: {
+                    $eq: null
+                }
+            }
             ]
         };
 
@@ -353,15 +358,15 @@ module.exports = {
             case '':
                 query.$and.push({
                     $or: [{
-                            date: {
-                                $eq: []
-                            }
-                        },
-                        {
-                            date: {
-                                $gt: new Date().setHours(0, 0, 0, 0)
-                            }
+                        date: {
+                            $eq: []
                         }
+                    },
+                    {
+                        date: {
+                            $gt: new Date().setHours(0, 0, 0, 0)
+                        }
+                    }
                     ]
                 });
                 break;
@@ -380,29 +385,29 @@ module.exports = {
         if (searchText) {
             query.$and.push({
                 $or: [{
-                        title: {
-                            $regex: searchText,
-                            $options: 'i'
-                        }
-                    },
-                    {
-                        description: {
-                            $regex: searchText,
-                            $options: 'i'
-                        }
-                    },
-                    {
-                        organizer: {
-                            $regex: searchText,
-                            $options: 'i'
-                        }
-                    },
-                    {
-                        eventType: {
-                            $regex: searchText,
-                            $options: 'i'
-                        }
+                    title: {
+                        $regex: searchText,
+                        $options: 'i'
                     }
+                },
+                {
+                    description: {
+                        $regex: searchText,
+                        $options: 'i'
+                    }
+                },
+                {
+                    organizer: {
+                        $regex: searchText,
+                        $options: 'i'
+                    }
+                },
+                {
+                    eventType: {
+                        $regex: searchText,
+                        $options: 'i'
+                    }
+                }
                 ]
             });
         }
@@ -420,12 +425,12 @@ module.exports = {
         if (eventLocation != "") {
             locationQuery = {
                 $and: [...baseQuery.$and,
-                    {
-                        'eventLocation.name': {
-                            $regex: eventLocation,
-                            $options: 'i'
-                        },
-                    }
+                {
+                    'eventLocation.name': {
+                        $regex: eventLocation,
+                        $options: 'i'
+                    },
+                }
                 ], // Copy conditions from baseQuery.$and
                 $or: [...baseQuery.$or]
             };
@@ -581,44 +586,44 @@ module.exports = {
     async getIds() {
         let data = await PosterModel.find({
             $and: [{
-                    isHidden: false
-                },
-                {
-                    isModerated: true
-                },
-                {
-                    isDraft: false
-                },
-                {
-                    rejected: false
-                },
-                {
-                    endDate: {
-                        $gte: new Date().setHours(0, 0, 0, 0)
-                    }
+                isHidden: false
+            },
+            {
+                isModerated: true
+            },
+            {
+                isDraft: false
+            },
+            {
+                rejected: false
+            },
+            {
+                endDate: {
+                    $gte: new Date().setHours(0, 0, 0, 0)
                 }
+            }
             ],
             $or: [{
-                    endEventDate: {
-                        $gte: new Date().setHours(23, 59, 59, 99)
-                    }
-                },
-                {
-                    endEventDate: {
-                        $exists: false
-                    }
-                },
-                {
-                    endEventDate: {
-                        $eq: null
-                    }
+                endEventDate: {
+                    $gte: new Date().setHours(23, 59, 59, 99)
                 }
+            },
+            {
+                endEventDate: {
+                    $exists: false
+                }
+            },
+            {
+                endEventDate: {
+                    $eq: null
+                }
+            }
             ]
         })
         data = data.map(item => ({
             loc: `/post?_id=${item._id}`, // Replace with your dynamic route structure
-            images:[
-                {loc: item.image}
+            images: [
+                { loc: item.image }
             ]
         }));
         return data
@@ -637,13 +642,20 @@ module.exports = {
                 isDraft: false
             }).sort({
                 publicationDate: -1
-            })
+            }).populate({
+                path: 'creator',
+                select: 'email'
+            });
         } else {
             return PosterModel.find({
                 isModerated: false,
                 rejected: false,
                 isDraft: false
-            }).sort({
+            }).populate({
+                path: 'creator',
+               select: 'email'
+            })
+            .sort({
                 publicationDate: -1
             })
         }
@@ -654,20 +666,20 @@ module.exports = {
                 rejected: true,
                 isDraft: false,
                 $or: [{
-                        "eventLocation.city_with_type": {
-                            $in: cities
-                        }
-                    },
-                    {
-                        "eventLocation.area_with_type": {
-                            $in: areas
-                        }
-                    },
-                    {
-                        "eventLocation.region_with_type": {
-                            $in: regions
-                        }
+                    "eventLocation.city_with_type": {
+                        $in: cities
                     }
+                },
+                {
+                    "eventLocation.area_with_type": {
+                        $in: areas
+                    }
+                },
+                {
+                    "eventLocation.region_with_type": {
+                        $in: regions
+                    }
+                }
                 ]
             }).sort({
                 publicationDate: -1
@@ -675,26 +687,26 @@ module.exports = {
 
         } else {
             let poster = await PosterModel.find({
-                    $or: [{
-                            "eventLocation.city_with_type": {
-                                $in: cities
-                            }
-                        },
-                        {
-                            "eventLocation.area_with_type": {
-                                $in: areas
-                            }
-                        },
-                        {
-                            "eventLocation.region_with_type": {
-                                $in: regions
-                            }
-                        },
-                    ],
-                    isModerated: false,
-                    rejected: false,
-                    isDraft: false
-                })
+                $or: [{
+                    "eventLocation.city_with_type": {
+                        $in: cities
+                    }
+                },
+                {
+                    "eventLocation.area_with_type": {
+                        $in: areas
+                    }
+                },
+                {
+                    "eventLocation.region_with_type": {
+                        $in: regions
+                    }
+                },
+                ],
+                isModerated: false,
+                rejected: false,
+                isDraft: false
+            })
                 .sort({
                     publicationDate: -1
                 })
@@ -713,51 +725,51 @@ module.exports = {
                 posters = await PosterModel
                     .find({
                         $and: [{
-                                _id: {
-                                    $in: userFromDb.posters
-                                },
-                                isModerated: true,
-                                isDraft: false,
-                                rejected: false,
+                            _id: {
+                                $in: userFromDb.posters
                             },
-                            {
-                                endDate: {
-                                    $gt: Date.now()
+                            isModerated: true,
+                            isDraft: false,
+                            rejected: false,
+                        },
+                        {
+                            endDate: {
+                                $gt: Date.now()
+                            }
+                        },
+                        {
+                            $or: [{
+                                date: {
+                                    $eq: []
                                 }
                             },
                             {
-                                $or: [{
-                                        date: {
-                                            $eq: []
-                                        }
-                                    },
-                                    {
-                                        date: {
-                                            $gt: new Date().setHours(0, 0, 0, 0),
-                                        }
-                                    }
-                                ]
+                                date: {
+                                    $gt: new Date().setHours(0, 0, 0, 0),
+                                }
+                            }
+                            ]
+                        },
+                        {
+                            $or: [{
+                                endEventDate: {
+                                    $gte: new Date().setHours(23, 59, 59, 99)
+                                }
                             },
                             {
-                                $or: [{
-                                        endEventDate: {
-                                            $gte: new Date().setHours(23, 59, 59, 99)
-                                        }
-                                    },
-                                    {
-                                        endEventDate: {
-                                            $exists: false
-                                        }
-                                    },
-                                    {
-                                        endEventDate: {
-                                            $eq: null
-                                        }
-                                    }
-                                ]
+                                endEventDate: {
+                                    $exists: false
+                                }
+                            },
+                            {
+                                endEventDate: {
+                                    $eq: null
+                                }
                             }
+                            ]
+                        }
                         ],
-                    }, )
+                    },)
                     .sort({
                         publicationDate: -1
                     })
@@ -782,44 +794,44 @@ module.exports = {
                 posters = await PosterModel
                     .find({
                         $and: [{
-                                _id: {
-                                    $in: userFromDb.posters
-                                },
-                                isModerated: true,
-                                isDraft: false,
-                                rejected: false,
+                            _id: {
+                                $in: userFromDb.posters
+                            },
+                            isModerated: true,
+                            isDraft: false,
+                            rejected: false,
+                        },
+                        {
+                            $or: [{
+                                endDate: {
+                                    $lt: Date.now()
+                                }
                             },
                             {
-                                $or: [{
-                                        endDate: {
-                                            $lt: Date.now()
-                                        }
-                                    },
-                                    {
-                                        date: {
-                                            $lt: new Date().setHours(0, 0, 0, 0),
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                $or: [{
-                                        endEventDate: {
-                                            $lt: new Date().setHours(23, 59, 59, 99)
-                                        }
-                                    },
-                                    {
-                                        endEventDate: {
-                                            $exists: false
-                                        }
-                                    },
-                                    {
-                                        endEventDate: {
-                                            $eq: null
-                                        }
-                                    }
-                                ]
+                                date: {
+                                    $lt: new Date().setHours(0, 0, 0, 0),
+                                }
                             }
+                            ]
+                        },
+                        {
+                            $or: [{
+                                endEventDate: {
+                                    $lt: new Date().setHours(23, 59, 59, 99)
+                                }
+                            },
+                            {
+                                endEventDate: {
+                                    $exists: false
+                                }
+                            },
+                            {
+                                endEventDate: {
+                                    $eq: null
+                                }
+                            }
+                            ]
+                        }
                         ]
                     })
                     .sort({
@@ -865,52 +877,52 @@ module.exports = {
         let posters = await PosterModel
             .find({
                 $and: [{
-                        _id: {
-                            $ne: poster_id
-                        },
-                        isModerated: true,
-                        isDraft: false,
-                        rejected: false,
-                        isHidden: false
+                    _id: {
+                        $ne: poster_id
                     },
-                    {
-                        endDate: {
-                            $gt: Date.now()
+                    isModerated: true,
+                    isDraft: false,
+                    rejected: false,
+                    isHidden: false
+                },
+                {
+                    endDate: {
+                        $gt: Date.now()
+                    }
+                },
+                {
+                    $or: [{
+                        date: {
+                            $eq: []
                         }
                     },
                     {
-                        $or: [{
-                                date: {
-                                    $eq: []
-                                }
-                            },
-                            {
-                                date: {
-                                    $gt: new Date().setHours(0, 0, 0, 0),
-                                }
-                            }
-                        ]
+                        date: {
+                            $gt: new Date().setHours(0, 0, 0, 0),
+                        }
+                    }
+                    ]
+                },
+                {
+                    $or: [{
+                        endEventDate: {
+                            $gte: new Date().setHours(23, 59, 59, 99)
+                        }
                     },
                     {
-                        $or: [{
-                                endEventDate: {
-                                    $gte: new Date().setHours(23, 59, 59, 99)
-                                }
-                            },
-                            {
-                                endEventDate: {
-                                    $exists: false
-                                }
-                            },
-                            {
-                                endEventDate: {
-                                    $eq: null
-                                }
-                            }
-                        ]
+                        endEventDate: {
+                            $exists: false
+                        }
+                    },
+                    {
+                        endEventDate: {
+                            $eq: null
+                        }
                     }
+                    ]
+                }
                 ]
-            }, )
+            },)
             .$where(`function() {
                 return this.organizer.replace(/[^a-zа-яё]/gi, "").toLowerCase() === '${organizer}'.replace(/[^a-zа-яё]/gi, "").toLowerCase()
             }`)
@@ -952,35 +964,35 @@ module.exports = {
         const currentDate = new Date().setHours(0, 0, 0, 0);
         const queryBase = {
             $and: [{
-                    isHidden: false
-                },
-                {
-                    isModerated: true
-                },
-                {
-                    isDraft: false
-                },
-                {
-                    rejected: false
-                },
-                {
-                    endDate: {
-                        $gt: Date.now()
+                isHidden: false
+            },
+            {
+                isModerated: true
+            },
+            {
+                isDraft: false
+            },
+            {
+                rejected: false
+            },
+            {
+                endDate: {
+                    $gt: Date.now()
+                }
+            },
+            {
+                $or: [{
+                    date: {
+                        $eq: []
                     }
                 },
                 {
-                    $or: [{
-                            date: {
-                                $eq: []
-                            }
-                        },
-                        {
-                            date: {
-                                $gt: currentDate
-                            }
-                        }
-                    ]
+                    date: {
+                        $gt: currentDate
+                    }
                 }
+                ]
+            }
             ]
         };
 
@@ -1033,35 +1045,35 @@ module.exports = {
     async getActiveCities() {
         let activePosters = await PosterModel.find({
             $and: [{
-                    isHidden: false
-                },
-                {
-                    isModerated: true
-                },
-                {
-                    isDraft: false
-                },
-                {
-                    rejected: false,
-                },
-                {
-                    endDate: {
-                        $gt: Date.now()
+                isHidden: false
+            },
+            {
+                isModerated: true
+            },
+            {
+                isDraft: false
+            },
+            {
+                rejected: false,
+            },
+            {
+                endDate: {
+                    $gt: Date.now()
+                }
+            },
+            {
+                $or: [{
+                    date: {
+                        $eq: []
                     }
                 },
                 {
-                    $or: [{
-                            date: {
-                                $eq: []
-                            }
-                        },
-                        {
-                            date: {
-                                $gt: new Date().setHours(0, 0, 0, 0),
-                            }
-                        }
-                    ]
+                    date: {
+                        $gt: new Date().setHours(0, 0, 0, 0),
+                    }
                 }
+                ]
+            }
             ]
         }, {
             'eventLocation.name': 1,

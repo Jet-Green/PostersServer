@@ -193,6 +193,13 @@ module.exports = {
     subscriptionCount({ _id }) {
         return UserModel.findOne({ _id: _id }, { 'subscription.count': 1, })
     },
+    incrementPaidPosters({ _id, amount }) {
+        return UserModel.findByIdAndUpdate(
+            { _id },
+            { $inc: { 'subscription.count': amount } },
+            { new: true } // Вернуть обновленный документ
+        );
+    },
     processPhoneNumber(phone_number) {
         phone_number = phone_number.replace(/[^0-9]/g, "")
         if (phone_number.length === 11 && phone_number[0] === '8') {

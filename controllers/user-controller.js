@@ -125,6 +125,16 @@ module.exports = {
             next(error)
         }
     },
+    
+    async incrementPaidPosters(req, res, next) {
+        try {
+        
+            return res.json(await UserService.incrementPaidPosters(req.body))
+        } catch (error) {
+            next(error)
+        }
+    },
+    
     async removeLocationToEmail(req, res, next) {
         try {
             return res.json(await UserService.removeLocationToEmail(req.body.managerIn, req.body.email))

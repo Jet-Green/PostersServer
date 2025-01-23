@@ -19,6 +19,8 @@ router.post('/reset-password', userController.resetPassword)
 
 router.post('/buy-posters', authMiddleware, userController.buyPosters)
 router.post('/subscription-count', authMiddleware, userController.subscriptionCount)
+router.post('/increment-paid-posters', authMiddleware, userController.incrementPaidPosters)
+
 
 router.post('/remove-location-to-email', userController.removeLocationToEmail)
 router.post('/add-location-to-email', userController.addLocationToEmail)
