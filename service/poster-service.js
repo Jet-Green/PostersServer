@@ -5,10 +5,27 @@ const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
 const vkapi = require('../middleware/vk-api.js')
+const sanitizeHtml = require('sanitize-html');
 const _ = require('lodash')
 
 
 const logger = require('../logger.js')
+
+function sanitize(input) {    return sanitizeHtml(input, {
+    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'ul', 'ol', 'li', 'br'],
+    allowedAttributes: {
+        'a': ['href', 'target', 'rel'], // Разрешаем только ссылки и их атрибуты
+        'img': ['src', 'alt', 'title', 'width', 'height'] // Разрешаем изображения и их атрибуты
+    },
+    allowedSchemes: ['http', 'https', 'data'], // Запрещаем потенциально опасные схемы (например, javascript:)
+    allowedSchemesByTag: {
+        img: ['http', 'https', 'data'] // Специально для тегов <img>
+    },
+    // Предотвращаем JavaScript-инъекции
+    enforceHtmlBoundary: true
+})
+}
+
 
 let EasyYandexS3 = require('easy-yandex-s3').default;
 
@@ -183,6 +200,9 @@ module.exports = {
         poster.isDraft = false
         poster.rejected = false
         poster.isModerated = false
+
+        poster.description=sanitize(poster.description)
+
         const posterFromDb = await PosterModel.create(poster)
 
         await UserModel.findByIdAndUpdate(user_id, {
@@ -925,6 +945,7 @@ module.exports = {
     }, _id) {
         let posterFromDb = await PosterModel.findById(_id)
         // console.log(poster,poster?.eventLocation)
+        poster.description=sanitize(poster.description)
         if (poster?.eventLocation?.geo_lon) {
             poster.eventLocation.type = "Point"
             poster.eventLocation.coordinates = [parseFloat(poster.eventLocation.geo_lon), parseFloat(poster.eventLocation.geo_lat)]
