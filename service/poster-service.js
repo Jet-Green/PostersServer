@@ -998,8 +998,26 @@ module.exports = {
             },
             {
                 endDate: {
-                    $gt: Date.now()
+                    $gte: new Date().setHours(0, 0, 0, 0)
                 }
+            },
+                        {
+                $or: [{
+                    endEventDate: {
+                        $gte: new Date().setHours(23, 59, 59, 99)
+                    }
+                },
+                {
+                    endEventDate: {
+                        $exists: false
+                    }
+                },
+                {
+                    endEventDate: {
+                        $eq: null
+                    }
+                }
+                ]
             },
             {
                 $or: [{
@@ -1079,8 +1097,26 @@ module.exports = {
             },
             {
                 endDate: {
-                    $gt: Date.now()
+                    $gte: new Date().setHours(0, 0, 0, 0)
                 }
+            },
+            {
+                $or: [{
+                    endEventDate: {
+                        $gte: new Date().setHours(23, 59, 59, 99)
+                    }
+                },
+                {
+                    endEventDate: {
+                        $exists: false
+                    }
+                },
+                {
+                    endEventDate: {
+                        $eq: null
+                    }
+                }
+                ]
             },
             {
                 $or: [{
