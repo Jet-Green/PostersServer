@@ -12,6 +12,7 @@ if (process.env.NODE_ENV == 'production') {
 // экспортирую объект с пустыми функциями, если если мод development
 module.exports = process.env.NODE_ENV == 'production' ? {
     async sendPost(poster) {
+        return
         try {
             await bot.sendPhoto(
                 chat_id,
