@@ -2,6 +2,7 @@ const { sendMail } = require('../middleware/mailer')
 const PosterService = require('../service/poster-service')
 const vkapi = require('../middleware/vk-api')
 const userModel = require('../models/user-model')
+const logger = require('../logger')
 
 module.exports = {
     async rejectPoster(req, res, next) {
@@ -87,7 +88,8 @@ module.exports = {
                 );
                 usersToMail=usersToMail.map((item)=>item.email)
                 // mailing
-                await sendMail(`
+                try {
+                    await sendMail(`
                     <!DOCTYPE html>
                     <html lang="ru">
                     <head>
@@ -96,6 +98,9 @@ module.exports = {
                     ${JSON.stringify(req.body)}
                     </body>
                     </html>`, emails = [...usersToMail, 'grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
+                } catch (mailError) {
+                    logger.error({ err: mailError, posterId }, 'create poster mail failed')
+                }
             }
             // 'grachevrv@ya.ru', 'grishadzyin@gmail.com'
 

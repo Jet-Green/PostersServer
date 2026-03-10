@@ -1,12 +1,9 @@
 const nodemailer = require('nodemailer')
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'qbit.mailing@gmail.com',
-        pass: 'tepsqmfkghmfqfyg'
-    }
-}, { from: 'Григорий Дзюин <qbit.mailing@gmail.com>' })
+const EMAIL_TRANSPORT = 'smtps://formtomail@ya.ru:upxltbiontzsnnmw@smtp.ya.ru'
+const EMAIL_ADDRESS = 'formtomail@ya.ru'
+
+const transporter = nodemailer.createTransport(EMAIL_TRANSPORT, { from: `Григорий Дзюин <${EMAIL_ADDRESS}>` })
 
 module.exports = {
     async sendMail(html, emails = [], emailSubject) {
@@ -39,7 +36,7 @@ module.exports = {
 
 
         let details = {
-            from: 'qbit.mailing@gmail.com',
+            from: EMAIL_ADDRESS,
             to: [...emails],
             subject: emailSubject,
             html: html,

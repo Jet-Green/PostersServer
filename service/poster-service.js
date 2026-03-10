@@ -5,6 +5,7 @@ const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
 const telegramService = require('./telegram-service.js');
 const vkapi = require('../middleware/vk-api.js')
+const ApiError = require('../exception/api-error')
 const sanitizeHtml = require('sanitize-html');
 const _ = require('lodash')
 
@@ -242,21 +243,49 @@ module.exports = {
         return posterFromDb._id
     },
     async updateImageUrl(req) {
-        let buffer = {
-            buffer: req.files[0].buffer,
-            name: req.files[0].originalname,
+        const file = req.files?.[0]
+        const posterId = req.query?.poster_id || req.query?.posterId || req.body?.poster_id || req.body?.posterId
+
+        logger.info({
+            posterId,
+            queryPosterId: req.query?.poster_id,
+            queryPosterIdCamel: req.query?.posterId,
+            bodyPosterId: req.body?.poster_id,
+            bodyPosterIdCamel: req.body?.posterId,
+            hasFiles: Boolean(req.files?.length),
+            filesCount: req.files?.length || 0,
+            originalname: file?.originalname,
+            mimetype: file?.mimetype,
+            size: file?.size,
+        }, 'poster image upload started')
+
+        if (!posterId) {
+            logger.warn({}, 'poster image upload failed: posterId is missing')
+            throw ApiError.BadRequest('Не передан poster_id')
         }
-        let posterId = req.query.poster_id
+
+        if (!file) {
+            logger.warn({ posterId }, 'poster image upload failed: file is missing')
+            throw ApiError.BadRequest('Файл изображения не передан')
+        }
+
+        let buffer = {
+            buffer: file.buffer,
+            name: file.originalname,
+        }
 
         let posterFromDb = await PosterModel.findById(posterId)
         if (!posterFromDb) {
-            posterFromDb = await PosterModel.findById(posterId)
+            logger.warn({ posterId }, 'poster image upload failed: poster not found')
+            throw ApiError.BadRequest('Афиша не найдена')
         }
+
         if (posterFromDb.image) {
             let spl = posterFromDb.image.split('/')
             await s3.Remove(process.env.IMG_PLACE + spl[spl.length - 1])
         }
 
+        logger.info({ posterId, targetPrefix: process.env.IMG_PLACE }, 'poster image upload to s3 started')
         let uploadResult = await s3.Upload(buffer, process.env.IMG_PLACE);
         let filename = uploadResult.Location
         let update = await PosterModel.findByIdAndUpdate(posterId, {
@@ -270,6 +299,8 @@ module.exports = {
                 }
             })
         }
+
+        logger.info({ posterId, imageUrl: filename }, 'poster image upload completed')
 
         return filename
     },
