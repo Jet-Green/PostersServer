@@ -10,7 +10,7 @@ const multer = require('multer')
 const router = Router()
 
 //routes
-router.post('/create',authMiddleware, PosterController.create)
+router.post('/create',authMiddleware, multer().any(), PosterController.create)
 router.post('/create-draft',authMiddleware, PosterController.createDraft)
 
 router.get('/get-posters',authMiddleware, PosterController.getPosters)

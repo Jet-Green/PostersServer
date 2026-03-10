@@ -4,6 +4,18 @@ const vkapi = require('../middleware/vk-api')
 const userModel = require('../models/user-model')
 const logger = require('../logger')
 
+function normalizeCreatePayload(body) {
+    if (typeof body.poster === 'string') {
+        body.poster = JSON.parse(body.poster)
+    }
+
+    if (typeof body.user_id === 'string') {
+        body.user_id = body.user_id.trim()
+    }
+
+    return body
+}
+
 module.exports = {
     async rejectPoster(req, res, next) {
         try {
@@ -76,35 +88,48 @@ module.exports = {
     },
     async create(req, res, next) {
         try {
-            const posterId = await PosterService.createPoster(req.body)
+            const payload = normalizeCreatePayload(req.body)
+            const posterId = await PosterService.createPoster(payload)
+            let imageUrl = payload?.poster?.image || ''
+
+            if (req.files?.length) {
+                imageUrl = await PosterService.updateImageUrl({
+                    files: req.files,
+                    query: { posterId },
+                    body: { posterId }
+                })
+            }
+
             if (process.env.NODE_ENV == 'production') {//process.env.NODE_ENV == 'production'
-                let usersToMail = await userModel.find({
-                    $or: [
-                        { "managerIn":{$elemMatch: { "type": "city_with_type", "name": req.body.poster.eventLocation.city_with_type } }},
-                        { "managerIn":{$elemMatch: { "type": "area_with_type", "name": req.body.poster.eventLocation.area_with_type } }},
-                        { "managerIn":{$elemMatch: { "type": "region_with_type", "name": req.body.poster.eventLocation.region_with_type } }},
-                    ]
-                }
-                );
-                usersToMail=usersToMail.map((item)=>item.email)
-                // mailing
-                try {
-                    await sendMail(`
+                void (async () => {
+                    try {
+                        let usersToMail = await userModel.find({
+                            $or: [
+                                { "managerIn":{$elemMatch: { "type": "city_with_type", "name": payload.poster.eventLocation.city_with_type } }},
+                                { "managerIn":{$elemMatch: { "type": "area_with_type", "name": payload.poster.eventLocation.area_with_type } }},
+                                { "managerIn":{$elemMatch: { "type": "region_with_type", "name": payload.poster.eventLocation.region_with_type } }},
+                            ]
+                        }
+                        )
+                        usersToMail = usersToMail.map((item) => item.email)
+
+                        await sendMail(`
                     <!DOCTYPE html>
                     <html lang="ru">
                     <head>
                     </head>
                     <body>
-                    ${JSON.stringify(req.body)}
+                    ${JSON.stringify(payload)}
                     </body>
                     </html>`, emails = [...usersToMail, 'grachevrv@ya.ru', 'grishadzyin@gmail.com'], 'Создана афиша')
-                } catch (mailError) {
-                    logger.error({ err: mailError, posterId }, 'create poster mail failed')
-                }
+                    } catch (mailError) {
+                        logger.error({ err: mailError, posterId }, 'create poster mail failed')
+                    }
+                })()
             }
             // 'grachevrv@ya.ru', 'grishadzyin@gmail.com'
 
-            return res.json({ _id: posterId, message: 'Создано' })
+            return res.json({ _id: posterId, image: imageUrl, message: 'Создано' })
         } catch (error) {
             next(error)
         }
