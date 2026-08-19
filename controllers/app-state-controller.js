@@ -80,5 +80,21 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    async setFeaturedPosterId(req, res, next) {
+        try {
+            await appStateService.setFeaturedPosterId(req.body.posterId)
+            return res.json({ success: true })
+        } catch (error) {
+            next(error)
+        }
+    },
+    async getFeaturedPosterId(req, res, next) {
+        try {
+            let posterId = await appStateService.getFeaturedPosterId()
+            return res.json({ posterId })
+        } catch (error) {
+            next(error)
+        }
     }
 }

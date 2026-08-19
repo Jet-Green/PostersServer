@@ -3,6 +3,7 @@ const UserModel = require('../models/user-model.js')
 const EventLocationModel = require('../models/event-location-model.js');
 const EventLogService = require('../service/event-log-service')
 const UserService = require('../service/user-service');
+const AppStateModel = require('../models/app-state-model');
 const telegramService = require('./telegram-service.js');
 const vkapi = require('../middleware/vk-api.js')
 const ApiError = require('../exception/api-error')
@@ -320,6 +321,13 @@ module.exports = {
         const sitePage = page || 1; // Default to page 1 if not provided
         const skip = (sitePage - 1) * limit;
 
+        // Get featured poster ID from app state
+        let featuredPosterId = null;
+        try {
+            let appState = await AppStateModel.findOne({});
+            featuredPosterId = appState?.featuredPosterId || null;
+        } catch (e) {}
+
         // Start with the base query for filtering events
         let query = {
             $and: [{
@@ -357,6 +365,11 @@ module.exports = {
             }
             ]
         };
+
+        // Exclude featured poster from main results (it will be prepended on page 1)
+        if (featuredPosterId) {
+            query.$and.push({ _id: { $ne: featuredPosterId } });
+        }
 
         // Filter by posterType if provided
         if (posterType) {
@@ -573,6 +586,16 @@ module.exports = {
                     seenDocs.add(doc._id.toString());
                 }
             }
+        }
+
+        // On page 1, prepend the featured poster
+        if (sitePage === 1 && featuredPosterId) {
+            try {
+                let featuredPoster = await PosterModel.findById(featuredPosterId);
+                if (featuredPoster && !featuredPoster.isHidden && featuredPoster.isModerated && !featuredPoster.isDraft && !featuredPoster.rejected) {
+                    results.unshift(featuredPoster);
+                }
+            } catch (e) {}
         }
 
         return results;

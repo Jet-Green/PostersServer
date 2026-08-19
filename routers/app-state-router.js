@@ -16,4 +16,7 @@ router.get('/managers', authMiddleware, appStateController.getManagers)
 router.post('/user-to-manager', authMiddleware, appStateController.userToManager)
 router.post('/manager-to-user', authMiddleware, appStateController.managerToUser)
 
+router.post('/set-featured-poster', authMiddleware, appStateController.setFeaturedPosterId)
+router.get('/get-featured-poster', appStateController.getFeaturedPosterId)
+
 module.exports = router

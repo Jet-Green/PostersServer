@@ -42,5 +42,12 @@ module.exports = {
     managerToUser(userId) {
         // убираем только роли, начинающиеся с manager.
         return UserModel.findByIdAndUpdate(userId, { $pull: { roles: { $regex: 'manager', $options: 'i' } } })
+    },
+    async setFeaturedPosterId(posterId) {
+        return AppStateModel.findOneAndUpdate({}, { featuredPosterId: posterId }, { upsert: true })
+    },
+    async getFeaturedPosterId() {
+        let state = await this.getAppState()
+        return state.featuredPosterId || null
     }
 }
